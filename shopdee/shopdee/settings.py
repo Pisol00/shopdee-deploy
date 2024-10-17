@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': os.environ.get('DATABASE_NAME', 'shopdee_db'),
         'USER': os.environ.get('DATABASE_USER', 'postgres'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', '1234'),
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),  # ใช้ชื่อ service ใน docker-compose
+        'HOST': os.environ.get('DATABASE_HOST', 'db'),  # ใช้ชื่อ service ใน docker-compose
         'PORT': os.environ.get('DATABASE_PORT', '5432'),
     }
 }
