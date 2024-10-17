@@ -1,0 +1,50 @@
+.reviews {
+  margin-top: 20px;
+}
+
+.review {
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eaeaea;
+  cursor: default;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.review-author {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.review-rating {
+  font-size: 1.2em;
+  color: #f39c12; /* สีส้มสำหรับดาว */
+}
+
+.review-content {
+  font-size: 1em;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.review-date {
+  font-size: 0.9em;
+  color: #999;
+  text-align: right;
+}
+
+.no-reviews {
+  text-align: center;
+  font-size: 1rem;
+  color: #999;
+  margin-top: 20px;
+}
+

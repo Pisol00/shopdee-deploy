@@ -1,0 +1,72 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    body{
+        cursor: default;
+    }
+    .sidebar {
+        width: 240px;
+        background-color: #2c3e50;
+        color: white;
+        padding: 20px;
+        height: 100vh;
+        position: fixed;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 1.5rem;
+    }
+
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .sidebar ul li {
+        margin: 15px 0;
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar ul li:hover {
+        background-color: #34495e;
+        border-radius: 5px;
+    }
+
+    .sidebar ul li i {
+        margin-right: 10px;
+        font-size: 1.5rem; /* ปรับขนาดไอคอน */
+        color: #1abc9c; /* เปลี่ยนสีไอคอน */
+        transition: color 0.3s; /* เพิ่มการเปลี่ยนสีเมื่อโฮเวอร์ */
+    }
+
+    .sidebar ul li:hover i {
+        color: #16a085; /* สีเมื่อโฮเวอร์ */
+    }
+
+    .sidebar ul li a {
+        text-decoration: none; /* ลบเส้นใต้ */
+        color: white; /* เปลี่ยนสีลิงก์ */
+        display: block; /* ให้ลิงก์ขยายไปเต็มความกว้างของ li */
+        width: 100%; /* ความกว้าง 100% */
+        height: 100%; /* ความสูง 100% */
+    } 
+
+
+</style>
+
+<div class="sidebar">
+    <h2>Shopdee</h2>
+    <ul>
+        <li><a href="{% url 'employee_dashboard' %}"><i class="fas fa-dashboard"></i> Employee Dashboard</a></li>
+        <li><a href="{% url 'add_brand' %}"><i class="fas fa-plus-circle"></i> Add Brand</a></li>
+        <li><a href="{% url 'add_collection' %}"><i class="fas fa-folder-plus"></i> Add Collections</a></li>
+        <li><a href="{% url 'add_seller' %}"><i class="fas fa-user-plus"></i> Add Seller </a></li>
+        <li><a href="{% url 'homepage' %}"><i class="fas fa-home"></i> Back To Homepage</a></li>
+    </ul>
+</div>

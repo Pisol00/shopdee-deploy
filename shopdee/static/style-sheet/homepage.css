@@ -1,0 +1,289 @@
+/* body {
+    font-family: 'Inter', sans-serif;
+} */
+
+/* section-main */
+.section-main {
+  display: flex;
+  align-items: center;
+  background-color: #f2f0f1;
+  padding-left: 100px;
+  padding-right: 100px;
+  
+}
+.main-content {
+  width: 300px;
+  max-width: 600px;
+  flex: 1;
+  padding-right: 2rem;
+}
+.section-main h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.section-main p {
+  color: #666;
+  margin-bottom: 2rem;
+}
+.button-explore {
+  display: inline-block;
+  background-color: #000;
+  color: #fff;
+  padding: 0.75rem 2rem;
+  text-decoration: none;
+  border-radius: 25px;
+}
+.main-image {
+  flex: 1;
+  position: relative;
+  height: 800px;
+  overflow: hidden;
+}
+.main-image img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* section-band */
+.section-band {
+  background-color: #000;
+  padding: 20px;
+}
+.section-band {
+  background-color: #000; /* สีพื้นหลังของ section */
+  padding: 20px; /* ช่องว่างด้านใน */
+}
+
+.brand-container {
+  display: flex; /* ใช้ Flexbox */
+  flex-wrap: wrap; /* อนุญาตให้โลโก้ขึ้นบรรทัดใหม่ */
+  justify-content: center; /* จัดกลางโลโก้ */
+  gap: 20px; /* ระยะห่างระหว่างโลโก้ */
+}
+
+.brand-logo {
+  display: flex; /* ใช้ Flexbox ในการจัดเรียงโลโก้ */
+  flex-wrap: wrap; /* อนุญาตให้โลโก้ขึ้นบรรทัดใหม่ */
+  
+}
+
+.brand-logo a {
+  flex: 1 1 100px; /* ขนาดโลโก้เริ่มต้น 100px และยืดหยุ่นได้ */
+  max-width: 120px; /* ความกว้างสูงสุดของโลโก้ */
+  text-align: center; /* จัดกลางภาพ */
+}
+
+.brand-logo img {
+  max-width: 50%; /* ทำให้ภาพมีความกว้างสูงสุดไม่เกิน 100% ของ container */
+  height: auto; /* รักษาสัดส่วนของภาพ */
+}
+
+.section-arrivals {
+  padding: 5rem 0; /* เพิ่มช่องว่างด้านบนและด้านล่าง */
+}
+
+.title-arrivals {
+  font-size: 2.5rem; /* ขนาดฟอนต์สำหรับหัวข้อ */
+  margin-bottom: 2rem; /* ช่องว่างด้านล่างของหัวข้อ */
+  color: #333; /* สีของข้อความ */
+  text-align: center; /* จัดกลางข้อความ */
+}
+
+.products-wrapper {
+  max-width: 1200px; /* กำหนดความกว้างสูงสุด */
+  margin: 0 auto; /* จัดกลาง */
+}
+
+.products {
+  display: flex; /* แสดงรายการสินค้าในแนวนอน */
+  justify-content: center;
+  gap: 60px;
+}
+
+.product {
+  background: white; /* สีพื้นหลังของผลิตภัณฑ์ */
+  border-radius: 10px; /* มุมโค้ง */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  flex: 1;
+  max-width: 300px; /* ความกว้างสูงสุด */
+  transition: transform 0.3s; /* เพิ่มการเคลื่อนไหวเมื่อมีการ hover */
+  display: flex;
+  flex-direction: column; /* ให้แสดงในแนวตั้ง */
+  margin-bottom: 50px;
+}
+
+.product:hover {
+  transform: scale(1.05); /* ขยายขนาดเมื่อ hover */
+  cursor: pointer; /* เปลี่ยนเป็นเคอร์เซอร์ */
+}
+
+.product-info {
+  padding: 1rem; /* ช่องว่างภายใน */
+  flex-grow: 1; /* ทำให้ส่วนนี้ขยายเต็มพื้นที่ */
+  display: flex;
+  flex-direction: column; /* ให้แสดงในแนวตั้ง */
+  justify-content: space-between; /* เว้นระยะระหว่างองค์ประกอบ */
+  gap: 20px;
+}
+
+.product-img {
+  height: 200px; /* กำหนดความสูงของรูปภาพ */
+  background-color: #e0e0e0; /* สีพื้นหลังสำหรับรูปภาพ */
+  display: flex; /* แสดงรูปภาพ */
+  justify-content: center; /* จัดกลางรูปภาพ */
+  align-items: center; /* จัดกลางแนวตั้ง */
+  margin-bottom: 1rem; /* ช่องว่างด้านล่าง */
+}
+
+.product-img img {
+  width: 100%;
+  object-fit: cover;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.product-price-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.product-price {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.view-all-content {
+  display: flex;
+  justify-content: center;
+}
+
+.view-all {
+  padding: 0.5rem 2rem; /* ช่องว่างภายในปุ่ม */
+  font-size: 0.8rem; /* ขนาดฟอนต์สำหรับปุ่ม */
+  color: #333; /* สีของข้อความปุ่ม */
+  border: 1px solid #333; /* เส้นขอบ */
+  border-radius: 50px; /* มุมโค้งของปุ่ม */
+  text-align: center; /* จัดกลางข้อความ */
+  transition: background-color 0.3s, color 0.3s; /* เพิ่มการเคลื่อนไหว */
+  text-decoration: none;
+}
+
+.view-all:hover {
+  background-color: #333; /* เปลี่ยนสีพื้นหลังเมื่อ hover */
+  color: white; /* เปลี่ยนสีข้อความเมื่อ hover */
+}
+
+.product a {
+  text-decoration: none; /* ไม่ให้ข้อความเป็นลิงก์ */
+  color: #333; /* สีของข้อความ */
+}
+
+
+.popular-collections {
+    padding: 5rem 0; /* เพิ่มช่องว่างด้านบนและด้านล่าง */
+}
+
+.section-title {
+    font-size: 2.5rem; /* ขนาดฟอนต์สำหรับหัวข้อ */
+    margin-bottom: 2rem; /* ช่องว่างด้านล่างของหัวข้อ */
+    color: #333; /* สีของข้อความ */
+    text-align: center; /* จัดกลางข้อความ */
+}
+
+.collection-list {
+    display: flex; /* แสดงคอลเลคชันในแนวนอน */
+    justify-content: center; /* จัดกลางรายการ */
+    gap: 60px; /* ระยะห่างระหว่างคอลเลคชัน */
+    flex-wrap: wrap; /* ให้รายการอยู่ในแถวถัดไปเมื่อเต็ม */
+}
+
+.container-best-seller{
+    margin-bottom: 50px;
+}
+.collection-item {
+    background: white; /* สีพื้นหลังของคอลเลคชัน */
+    border-radius: 10px; /* มุมโค้ง */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* เงา */
+    overflow: hidden;
+    flex: 1; /* ให้คอลเลคชันขยายเต็มที่ */
+    max-width: 300px; /* ความกว้างสูงสุด */
+    transition: transform 0.3s; /* เพิ่มการเคลื่อนไหวเมื่อมีการ hover */
+    display: flex;
+    flex-direction: column; /* ให้แสดงในแนวตั้ง */
+    margin-bottom: 50px; /* ระยะห่างระหว่างคอลเลคชัน */
+}
+
+.collection-item:hover {
+    transform: scale(1.05); /* ขยายขนาดเมื่อ hover */
+    cursor: pointer; /* เปลี่ยนเป็นเคอร์เซอร์ */
+}
+
+.collection-name {
+    font-size: 16px; /* ขนาดฟอนต์สำหรับชื่อคอลเลคชัน */
+    font-weight: bold; /* ทำให้ตัวหนา */
+    margin-bottom: 5px; /* ช่องว่างด้านล่าง */
+    text-align: center; /* จัดกลางชื่อคอลเลคชัน */
+}
+
+.order-count {
+    font-size: 14px; /* ขนาดฟอนต์สำหรับจำนวนคำสั่งซื้อ */
+    color: #666; /* สีของจำนวนคำสั่งซื้อ */
+    text-align: center; /* จัดกลางข้อความ */
+}
+
+.no-collections {
+    color: #777; /* สีข้อความเมื่อไม่มีคอลเลคชัน */
+    padding: 15px; /* ระยะห่างภายใน */
+    text-align: center; /* จัดกลางข้อความ */
+}
+
+
+.gender-carousel {
+  padding: 2rem 0; /* ช่องว่างด้านบนและด้านล่าง */
+}
+
+.carousel-inner {
+  overflow: hidden; /* ซ่อนส่วนที่เกิน */
+}
+
+.category-link {
+  display: block; /* ทำให้ลิงก์เป็นบล็อก */
+}
+
+.rounded-image {
+  width: 100%; /* ทำให้รูปภาพเต็มความกว้าง */
+  height: 800px; /* กำหนดความสูงให้เท่ากัน */
+  object-fit: cover; /* ให้รูปภาพครอบคลุมทั้งพื้นที่ โดยรักษาสัดส่วน */
+}
+
+.carousel-caption {
+  bottom: 20px; /* จัดตำแหน่ง caption ให้อยู่สูงขึ้นเล็กน้อย */
+  text-align: center; /* จัดกลางข้อความ */
+}
+
+.carousel-title {
+  font-size: 1.5rem; /* ขนาดฟอนต์สำหรับชื่อ */
+  font-weight: bold; /* ตัวหนา */
+  color: #fff; /* สีข้อความ */
+}
+
+.carousel .btn {
+  margin-top: 10px; /* ช่องว่างด้านบนของปุ่ม */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  border-radius: 50%; /* มุมโค้งสำหรับปุ่ม */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%; /* ขนาดของปุ่มควบคุม */
+}
+

@@ -1,0 +1,114 @@
+.container-sell {
+  max-width: 1200px; /* กำหนดความกว้างสูงสุด */
+  margin: 50px auto; /* จัดกึ่งกลาง */
+  padding: 20px; /* เพิ่ม padding */
+  display: flex; /* ใช้ flexbox */
+  gap: 40px; /* เพิ่มระยะห่างระหว่างสองคอลัมน์ */
+  background-color: #f3f4f6; /* สีพื้นหลังสำหรับ container */
+  border-radius: 10px; /* มุมโค้งของ container */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* เงา */
+}
+
+/* Style สำหรับ Product Details */
+.product-details {
+  flex: 1; /* กำหนดให้ใช้พื้นที่ที่เหลือ */
+  background-color: #ffffff; /* สีพื้นหลัง */
+  border-radius: 8px; /* มุมโค้ง */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* เงา */
+  padding: 20px; /* เพิ่ม padding */
+  transition: transform 0.3s; /* เอฟเฟกต์ในการยก */
+}
+
+/* Hover effect สำหรับ Product Details */
+.product-details:hover {
+  transform: translateY(-5px); /* ยกขึ้นเมื่อเลื่อนเมาส์ */
+}
+
+/* Style สำหรับ Checkout Details */
+.checkout-details {
+  flex: 1; /* กำหนดให้ใช้พื้นที่ที่เหลือ */
+  background-color: #ffffff; /* สีพื้นหลัง */
+  border-radius: 8px; /* มุมโค้ง */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* เงา */
+  padding: 20px; /* เพิ่ม padding */
+  transition: transform 0.3s; /* เอฟเฟกต์ในการยก */
+}
+
+/* Hover effect สำหรับ Checkout Details */
+.checkout-details:hover {
+  transform: translateY(-5px); /* ยกขึ้นเมื่อเลื่อนเมาส์ */
+}
+
+/* Style สำหรับ Product Image */
+.product-image {
+  max-width: 100%; /* ปรับให้พอดีกับพื้นที่ */
+  height: auto; /* ให้สูงอัตโนมัติ */
+  border-radius: 8px; /* มุมโค้ง */
+  border: 1px solid #ddd; /* ขอบ */
+}
+
+/* Style สำหรับ Subtitle */
+.subtitle {
+  color: #777; /* สีของข้อความ */
+  font-style: italic; /* ตัวเอียง */
+}
+
+/* Style สำหรับ Detail Row */
+.detail-row {
+  display: flex; /* ใช้ flexbox */
+  justify-content: space-between; /* จัดเรียงให้อยู่ที่ซ้ายและขวา */
+  padding: 10px 0; /* เพิ่ม padding */
+  border-bottom: 1px solid #ddd; /* ขีดล่าง */
+}
+
+/* Style สำหรับ Payout Method */
+.payout-method {
+  cursor: pointer; /* แสดงว่าคลิกได้ */
+  color: #007bff; /* สีของข้อความ */
+  font-weight: bold; /* ตัวหนา */
+  transition: color 0.3s; /* เอฟเฟกต์ในการเปลี่ยนสี */
+}
+
+/* Hover effect สำหรับ Payout Method */
+.payout-method:hover {
+  color: #0056b3; /* เปลี่ยนสีเมื่อเลื่อนเมาส์ */
+}
+
+/* Style สำหรับ Submit Button */
+.submit-btn {
+  background-color: #28a745; /* สีพื้นหลัง */
+  color: #fff; /* สีข้อความ */
+  border: none; /* ไม่มีขอบ */
+  padding: 10px 20px; /* เพิ่ม padding */
+  border-radius: 5px; /* มุมโค้ง */
+  cursor: pointer; /* แสดงว่าคลิกได้ */
+  font-size: 16px; /* ขนาดตัวอักษร */
+  transition: background-color 0.3s; /* เอฟเฟกต์ในการเปลี่ยนสี */
+}
+
+/* Hover effect สำหรับ Submit Button */
+.submit-btn:hover {
+  background-color: #218838; /* เปลี่ยนสีเมื่อเลื่อนเมาส์ */
+}
+
+/* Style สำหรับ Upload Button */
+.upload-button {
+  display: inline-block; /* ให้เป็น inline-block */
+  background-color: #007bff; /* สีพื้นหลัง */
+  color: #fff; /* สีข้อความ */
+  padding: 10px 20px; /* เพิ่ม padding */
+  border-radius: 5px; /* มุมโค้ง */
+  cursor: pointer; /* แสดงว่าคลิกได้ */
+  margin-bottom: 10px; /* เพิ่มระยะห่างด้านล่าง */
+  transition: background-color 0.3s; /* เอฟเฟกต์ในการเปลี่ยนสี */
+}
+
+/* Hover effect สำหรับ Upload Button */
+.upload-button:hover {
+  background-color: #0056b3; /* เปลี่ยนสีเมื่อเลื่อนเมาส์ */
+}
+
+/* Style สำหรับ Input Upload */
+.upload-input {
+  display: none; /* ซ่อน input แบบธรรมดา */
+}

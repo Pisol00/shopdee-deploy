@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            cursor: default;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            flex: 1;
+            background-color: #ecf0f1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 70% 30%; /* กำหนด layout 70:30 */
+            gap: 25px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #16a085;
+        }
+    </style>
+</head>
+<body>
+    {% include 'nav-employee.html' %} <!-- รวม sidebar ที่นี่ -->
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Employee Dashboard</h1>
+            <span>
+                <span>Hi, {{ request.user.username }}</span>
+                <span>(</span><a href="{%url 'logout'%}" style="color: #666;">logout</a>)</span
+            </div>
+
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Section for Collections Overview -->
+            <div class="card">
+                <h3>Collections Overview</h3>
+                <table>
+                    <tr>
+                        <th>Collection Name</th>
+                        <th>Category</th>
+                        <th>Brand</th>
+                        <th>Created At</th>
+                    </tr>
+                    {% for collection in collections %}
+                    <tr>
+                        <td>{{ collection.name }}</td>
+                        <td>{{ collection.category.name }}</td>
+                        <td>{{ collection.brand.name }}</td>
+                        <td>{{ collection.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- Section for Sales Analytics -->
+            <div class="card">
+                <h3 style="display: inline;">Top 10 Provinces Order</h3>
+                <span style="margin-left: 10px;">( Total Orders: {{ sales_analytics.total_orders }} )</span>
+                <div>
+                    <h4>Provinces:</h4>
+                    <ul>
+                        {% for province in sales_analytics.top_provinces %}
+                        <li>
+                            {{ province.shipping_address__province }} : {{ province.order_count }} orders
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section for Products -->
+            <div class="card" style="grid-column: span 2;">
+                <h3>Top 5 Selling Collections</h3>
+                <table>
+                    <tr>
+                        <th>Collection Name</th>
+                        <th>Best Selling Size</th> <!-- แสดงขนาดที่ขายดีที่สุด -->
+                        <th>Sold Count</th>  <!-- แสดงจำนวนที่ขายได้ -->
+                    </tr>
+                    {% for data in collection_data %}
+                    <tr>
+                        <td>{{ data.collection.name }}</td>
+                        <td>{{ data.best_selling_size }}</td>  <!-- แสดงขนาดที่ขายดีที่สุด -->
+                        <td>{{ data.collection.total_sales }}</td>  <!-- แสดงจำนวนที่ขายได้ -->
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            
+            
+
+            <!-- Section for Wishlists -->
+            <!-- <div class="card">
+                <h3>Customer Wishlists</h3>
+                <table>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Wishlist Count</th>
+                    </tr>
+                    {% for wishlist in wishlists %}
+                    <tr>
+                        <td>{{ wishlist.user.username }}</td>
+                        <td>{{ wishlist.collections.count }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div> -->
+        </div>
+    </div>
+</body>
+</html>

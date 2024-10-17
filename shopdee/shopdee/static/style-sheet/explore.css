@@ -1,0 +1,158 @@
+.size-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+
+}
+.size-button {
+  padding: 10px 15px; 
+  font-size: 12px; 
+  min-width: 100px; 
+}
+
+.size-button.selected {
+  background-color: #000; 
+  color: white; 
+}
+
+
+input[type="range"] {
+  width: 100%; 
+  height: 8px; 
+  background: #999; 
+  border-radius: 5px; 
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; 
+  appearance: none; 
+  width: 16px; 
+  height: 16px; 
+  background: #999; 
+  border-radius: 50%; 
+  cursor: pointer; 
+  box-shadow: none !important; 
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px; 
+  height: 16px; 
+  background: #fff; 
+  border-radius: 50%; 
+  cursor: pointer; 
+}
+
+input[type="range"]::-ms-thumb {
+  width: 16px; 
+  height: 16px; 
+  background: #fff; 
+  border-radius: 50%; 
+  cursor: pointer; 
+}
+
+.scrollable {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.size-grid .size-button {
+  width: 48px;
+  margin: 5px;
+}
+.size-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+.pagination .page-link:focus,
+.pagination .page-link:active {
+    outline: none; /* ลบขอบปกติ */
+    box-shadow: 0 0 5px rgba(141, 141, 141, 0.5); /* เพิ่มเงาเพื่อให้เด่นขึ้น */
+    border-color: #747474; /* เปลี่ยนสีขอบ */
+    background-color: #f8f9fa; /* สีพื้นหลังเมื่อกด */
+}
+
+
+.form-check-input:checked {
+  background-color: #000 !important; 
+  border-color: #000 !important; 
+  color: #fff !important; /
+}
+
+
+.form-check-input:focus {
+  border-color: #000 !important;
+  box-shadow: none !important; 
+}
+
+
+.form-check-input {
+  background-color: #f0f0f0 !important; 
+  border: 1px solid #ddd !important;
+}
+
+.form-check-input:checked {
+  color: #fff !important; 
+}
+
+.row {
+  margin: 0 -10px; /* ให้ margin ตรงข้ามกับ .col */
+}
+
+.col {
+  padding: 0 10px; /* เพิ่ม padding สำหรับแต่ละคอลัมน์ */
+}
+
+.collection {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */
+  display: flex; /* ใช้ flexbox */
+  flex-direction: column; /* ให้มีแนวตั้ง */
+  height: 100%; /* ทำให้สูงสุด */
+}
+
+.collection img {
+  width: 100%; /* Use full width */
+  object-fit: cover; /* Crop the image */
+  background-color: #fff;
+}
+
+.collection-info {
+  padding: 15px;
+  flex-grow: 1; /* ทำให้ข้อมูลผลิตภัณฑ์ขยายเต็มที่ */
+}
+
+.collection-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.collection-price-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.collection-price {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collection-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  font-size: 1.5rem; 
+}
+

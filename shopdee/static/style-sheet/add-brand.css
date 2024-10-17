@@ -1,0 +1,132 @@
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background: #ecf0f1;
+    cursor: default;
+  }
+  
+
+  .container{
+    margin-left: 260px;
+    padding: 40px;
+    flex: 1;
+  }
+/* Container สำหรับฟอร์ม */
+.brand-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* ส่วนหัวของฟอร์ม */
+.brand-header {
+    text-align: center;
+    color: #444; /* สีเข้มเล็กน้อยเพื่อความชัดเจน */
+    margin-bottom: 25px; /* เพิ่มช่องว่างด้านล่าง */
+    font-size: 28px; /* ขนาดใหญ่ขึ้นเล็กน้อย */
+    font-weight: 700; /* เน้นตัวอักษรให้เด่นขึ้น */
+}
+
+/* ฟอร์ม */
+.brand-form {
+    justify-content: center;
+    background-color: #fff; /* สีพื้นหลังขาว */
+    min-width: 600px;
+    padding: 30px; /* ช่องว่างภายใน */
+    border-radius: 8px; /* โค้งมน */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* เงา */
+    margin-bottom: 20px; /* ช่องว่างระหว่างฟอร์มกับ container */
+}
+
+/* จัด label ให้ชิดซ้าย */
+.brand-form p label {
+    display: block;
+    text-align: left; /* ชิดซ้าย */
+    font-weight: bold; /* ตัวหนา */
+    margin-bottom: 8px; /* ช่องว่างระหว่าง label และ input */
+    color: #333; /* สีตัวอักษร */
+    font-size: 15px; /* ขนาดตัวอักษร label */
+}
+
+/* สไตล์สำหรับ input, textarea, select */
+.brand-form p input, 
+.brand-form p textarea, 
+.brand-form p select {
+    width: 100%; /* กำหนดความกว้างเต็ม */
+    padding: 12px; /* เพิ่ม padding ภายใน input */
+    margin-bottom: 20px; /* ช่องว่างด้านล่าง */
+    border: 1px solid #ccc; /* ขอบ */
+    border-radius: 5px; /* มุมโค้ง */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    transition: border-color 0.3s ease; /* เพิ่มเอฟเฟกต์เมื่อโฟกัส */
+}
+
+.brand-form p input:focus, 
+.brand-form p textarea:focus, 
+.brand-form p select:focus {
+    border-color: #007bff; /* เปลี่ยนสีขอบเมื่อโฟกัส */
+    outline: none; /* เอาเส้นขอบของเบราเซอร์ออก */
+}
+
+/* ปุ่มดำ */
+.btn-black {
+    background-color: #000;
+    color: #fff;
+    padding: 12px 20px; /* ขนาดปุ่ม */
+    border: none;
+    border-radius: 5px; /* มุมโค้งมน */
+    cursor: pointer;
+    width: 100%; /* ขนาดเต็ม */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    font-weight: 600;
+    margin-top: 15px; /* ช่องว่างด้านบน */
+    transition: background-color 0.3s ease; /* เพิ่มเอฟเฟกต์ */
+}
+
+.btn-black:hover {
+    background-color: #333; /* เปลี่ยนสีเมื่อ hover */
+}
+
+/* ข้อความแจ้งเตือน */
+.error-messages {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.error-list {
+    padding: 0;
+    list-style-type: none;
+}
+
+.error-item {
+    color: red;
+}
+
+/* การตอบสนองหน้าจอขนาดเล็ก */
+@media (max-width: 768px) {
+    .brand-container {
+        padding: 20px;
+        max-width: 90%;
+    }
+}
+
+.brand-form .form-control {
+    width: 100%; /* ความกว้างเต็ม */
+    max-width: 600px; /* ความกว้างสูงสุด */
+    min-height: 50px; /* ความสูงขั้นต่ำ */
+    resize: vertical; /* อนุญาตให้ปรับขนาดได้แค่แนวตั้ง */
+    padding: 12px; /* เพิ่ม padding ภายใน */
+    border-radius: 5px; /* มุมโค้งมน */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    border: 1px solid #ccc; /* ขอบ */
+}
+
+.brand-form .form-control.description {
+    width: 100%; /* ทำให้ความกว้างเป็น 100% */
+    max-height: 80px; /* กำหนดความกว้างสูงสุดให้ textarea */
+}
