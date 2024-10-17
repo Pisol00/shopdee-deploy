@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Product Reviews{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="card mb-5 shadow-sm" style="max-width: 800px; margin: auto;"> <!-- กำหนดความกว้างสูงสุดเป็น 800px -->
+        <div class="card-body">
+            <h4 class="card-title text-center">Leave a Review</h4>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-dark btn-lg w-100">Submit Review</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

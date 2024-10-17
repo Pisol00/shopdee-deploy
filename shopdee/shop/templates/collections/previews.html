@@ -1,0 +1,35 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'style-sheet/collection-preview.css' %}">
+<div class="product-images">
+    <div class="thumbnail-container">
+        {% for image in images %}
+        <div class="thumbnail {% if image.is_primary %}active{% endif %}">
+            <img src="{{ image.image_url }}" alt="Thumbnail" onclick="changeMainImage('{{ image.image_url }}', this.parentElement)">
+        </div>
+        {% endfor %}
+    </div>
+    <div class="main-image">
+        {% for image in images %}
+        {% if image.is_primary %}
+        <img id="mainImage" src="{{ image.image_url }}" alt="{{ collection.name }}">
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- เปลี่ยนภาพขนาดย่อให้เป็นภาพหลัก-->
+    <script>
+        function changeMainImage(imageUrl, thumbnailElement) {
+            // เปลี่ยน src ของรูปหลัก
+            document.getElementById('mainImage').src = imageUrl;
+
+            // ลบคลาส 'active' จาก thumbnail เดิมที่มีอยู่
+            var currentActive = document.querySelector('.thumbnail.active');
+            if (currentActive) {
+                currentActive.classList.remove('active');
+            }
+
+            // เพิ่มคลาส 'active' ให้กับ thumbnail ที่ถูกกด
+            thumbnailElement.classList.add('active');
+        }
+    </script>
+</div>

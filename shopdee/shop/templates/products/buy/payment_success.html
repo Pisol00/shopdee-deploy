@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/payment-success.css' %}" />
+{% endblock %}
+
+{% block nav %}
+{% include 'nav.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container-payment">
+  <div class="success-message">
+    <h1>Payment Successful!</h1>
+    <p>Thank you for your purchase. Your payment has been processed successfully.</p>
+    <div class="success-icon">
+      <img src="https://shopdee-image.s3.ap-southeast-2.amazonaws.com/icon/success.png" alt="Success Icon" />
+    </div>
+  </div>
+
+  <div class="details-container">
+    <div class="payment-details">
+      <h2 class="text-center">Payment Details</h2>
+      <div class="detail-item">
+        <span>Payment ID:</span>
+        <span>{{ payment.id }}</span>
+      </div>
+      <div class="detail-item">
+        <span>Product:</span>
+        <span>{{ order.product.collection.name }}</span>
+      </div>
+      <div class="detail-item">
+        <span>Amount:</span>
+        <span>฿ {{ payment.amount }}</span>
+      </div>
+      <div class="detail-item">
+        <span>Payment Method:</span>
+        <span>{{ payment.get_payment_method_display }}</span>
+      </div>
+      <div class="detail-item">
+        <span>Status:</span>
+        <span>{{ payment.get_status_display }}</span>
+      </div>
+      <div class="detail-item">
+        <span>Shipping Address:</span>
+        <span>{{ order.shipping_address }}</span>
+      </div>
+      <div class="detail-item">
+        <span>Payment Date:</span>
+        <span>{{ payment.payment_date|date:"F j, Y, g:i a" }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <a href="{% url 'homepage' %}" class="btn btn-dark d-block rounded-pill mx-auto">Back to Home</a>
+</div>
+{% endblock %}
