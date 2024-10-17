@@ -1,16 +1,4 @@
-version: '3.8'
-
 services:
-  web:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - DJANGO_SETTINGS_MODULE=shopdee.settings
-      - DATABASE_URL=postgres://postgres:1234@db:5432/shopdee_db
-    depends_on:
-      - db
-
   db:
     image: postgres:latest
     environment:
@@ -19,3 +7,12 @@ services:
       POSTGRES_PASSWORD: 1234
     ports:
       - "5432:5432"
+
+  web:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres:1234@db:5432/shopdee_db
+    ports:
+      - "8000:8000"
