@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # คัดลอก source code
 COPY . .
 
-# รันคำสั่งเพื่อทำ migrations
-RUN python manage.py migrate
+# ตั้งค่าให้ expose พอร์ต 8000
+EXPOSE 8000
 
 # รันเซิร์ฟเวอร์ด้วย gunicorn
 CMD ["gunicorn", "shopdee.wsgi:application", "--bind", "0.0.0.0:8000"]

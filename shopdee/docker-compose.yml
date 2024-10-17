@@ -1,22 +1,27 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:latest
-    restart: always  # กำหนดให้รีสตาร์ทหากล้มเหลว
     environment:
       POSTGRES_DB: shopdee_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
     ports:
-      - "5432:5432"  # การแมพพอร์ตเพื่อเข้าถึงจากภายนอก
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   web:
-    build: .  # สร้างจาก Dockerfile ในโฟลเดอร์ปัจจุบัน
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "python manage.py migrate && gunicorn shopdee.wsgi:application --bind 0.0.0.0:8000"
     ports:
-      - "8000:8000"  # การแมพพอร์ตสำหรับ Django
+      - "8000:8000"
     depends_on:
-      - db  # รอให้ db พร้อมก่อนเริ่ม web
-    environment:
-      DATABASE_URL: postgres://postgres:1234@34.87.47.244:5432/shopdee_db # การตั้งค่าการเชื่อมต่อฐานข้อมูล
-    volumes:
-      - .:/app  # แมพพอร์ตโฟลเดอร์ปัจจุบันไปยังคอนเทนเนอร์
-    command: python manage.py runserver 0.0.0.0:8000  # คำสั่งเริ่มต้นสำหรับ Django
+      - db
+
+volumes:
+  postgres_data:
