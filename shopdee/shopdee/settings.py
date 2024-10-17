@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': 'shopdee_db',
         'USER': 'postgres',
         'PASSWORD': '1234',
-        'HOST': '34.87.47.244',  # ชื่อบริการที่ระบุใน docker-compose.yml
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
