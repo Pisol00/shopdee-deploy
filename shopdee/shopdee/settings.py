@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from urllib.parse import urlparse
+
+url = urlparse(os.environ.get("DATABASE_URL"))
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,13 +84,13 @@ WSGI_APPLICATION = 'shopdee.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "shopdee_db",
-        "USER": "postgres",
-        "PASSWORD": "1234",
-        "HOST": "localhost",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': url.path[1:],  # ชื่อฐานข้อมูล
+        'USER': url.username,  # ชื่อผู้ใช้
+        'PASSWORD': url.password,  # รหัสผ่าน
+        'HOST': url.hostname,  # โฮสต์
+        'PORT': url.port,  # พอร์ต
     }
 }
 
