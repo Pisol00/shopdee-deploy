@@ -30,7 +30,7 @@ class EditProfileForm(forms.ModelForm):
                 'class': 'form-control', 
                 'placeholder': 'Email', 
                 'readonly': 'readonly', 
-                'style': 'background-color: #000; color: #495057; cursor: default;'
+                'style': 'background-color: #e9ecef; color: #495057; cursor: default;'
             }),
         }
 
