@@ -3,46 +3,47 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'pisol00/shopdee:latest'
-        DOCKER_CREDENTIALS = credentials('dockerhub')
+        DOCKER_CREDENTIALS = credentials('dockerhub') // Jenkins credentials ID สำหรับ Docker Hub
+        DOCKER_REGISTRY = 'docker.io'
     }
 
     stages {
-        stage('Start Jenkins') {
+        stage('Build') {
             steps {
-                echo 'Starting Jenkins for Django...'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                dir('./shopdee') {
-                    script {
-                        echo "Running in ${pwd()}"
-                        echo "Starting to build the Docker image: ${DOCKER_IMAGE}"
-                        sh "docker build -t ${DOCKER_IMAGE} ."
-                    }
+                script {
+                    // Build Docker image
+                    sh 'docker build -t $DOCKER_IMAGE .'
                 }
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Test') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_CREDENTIALS_USR', passwordVariable: 'DOCKER_CREDENTIALS_PSW')]) {
-                        sh 'echo $DOCKER_CREDENTIALS_PSW | docker login --username $DOCKER_CREDENTIALS_USR --password-stdin'
-                        sh "docker push ${DOCKER_IMAGE}"
-                    }
+                    // รัน test ใน Docker container
+                    sh 'docker run --rm $DOCKER_IMAGE python manage.py test'
                 }
             }
         }
 
-        stage('Clear Docker Components') {
+        stage('Login to Docker Registry') {
             steps {
                 script {
-                    sh 'docker stop shopdee || true'
-                    sh 'docker rm shopdee || true' 
-                    sh 'docker rmi $(docker images -q) || true'
-                    sh 'docker system prune -af'
+                    // แยก username และ password จาก DOCKER_CREDENTIALS
+                    def dockerUsername = "${DOCKER_CREDENTIALS.username}"
+                    def dockerPassword = "${DOCKER_CREDENTIALS.password}"
+
+                    // เข้าสู่ระบบ Docker registry
+                    sh "echo '$dockerPassword' | docker login $DOCKER_REGISTRY -u '$dockerUsername' --password-stdin"
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Push Docker image ไปยัง Docker registry
+                    sh 'docker push $DOCKER_IMAGE'
                 }
             }
         }
@@ -50,10 +51,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh "docker pull ${DOCKER_IMAGE}"
-                    sh "docker run -d --name shopdee -p 8000:8000 ${DOCKER_IMAGE}"
-                    sh "docker exec shopdee python manage.py migrate" 
-                    sh "docker exec -d shopdee gunicorn shopdee.wsgi:application --bind 0.0.0.0:8000"
+                    // รัน container บน server
+                    sh 'docker-compose up -d'
                 }
             }
         }
@@ -61,9 +60,8 @@ pipeline {
 
     post {
         always {
-            script {
-                sh 'docker logout || true'
-            }
+            // Cleanup
+            sh 'docker-compose down'
         }
     }
 }

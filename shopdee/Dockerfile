@@ -1,20 +1,20 @@
-# ใช้ image ของ Python เป็น base
-FROM python:3.11
+# ใช้ image ของ Python
+FROM python:3.11-slim
 
-# ตั้ง working directory
+# กำหนด working directory
 WORKDIR /app
 
-# คัดลอกไฟล์ requirements.txt
+# คัดลอก requirements.txt เข้ามาใน container
 COPY requirements.txt .
 
 # ติดตั้ง dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# คัดลอก source code
+# คัดลอก source code ทั้งหมดเข้าไปใน container
 COPY . .
 
-# ตั้งค่าให้ expose พอร์ต 8000
-EXPOSE 8000
+# รัน migrations
+RUN python manage.py migrate
 
-# รันเซิร์ฟเวอร์ด้วย gunicorn
-CMD ["gunicorn", "shopdee.wsgi:application", "--bind", "0.0.0.0:8000"]
+# รัน server
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "shopdee.wsgi:application"]
