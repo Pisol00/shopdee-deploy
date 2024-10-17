@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                dir('./shopdee') {  // เปลี่ยน path ตามโครงสร้างโปรเจกต์
+                dir('./shopdee') {
                     sh 'echo "Running in $(pwd)"'
                     sh 'echo start build the Docker image = $DOCKER_IMAGE'
                     sh 'docker build -t $DOCKER_IMAGE .'
@@ -36,8 +36,8 @@ pipeline {
         stage('Clear Docker Components') {
             steps {
                 script {
-                    sh 'docker stop $(docker ps -a -q) || true'  
-                    sh 'docker rm $(docker ps -a -q) || true' 
+                    sh 'docker stop $(docker ps -q) || true'  
+                    sh 'docker rm $(docker ps -q) || true' 
                     sh 'docker rmi $(docker images -q) || true'
                     sh 'docker system prune -af'
                 }
@@ -53,7 +53,8 @@ pipeline {
                     // รัน migrations
                     sh 'docker exec shopdee python manage.py migrate' 
                     // รันเซิร์ฟเวอร์ Django
-                    sh 'docker exec -d shopdee python manage.py runserver 0.0.0.0:8000'
+                    // เปลี่ยนไปใช้ gunicorn แทน runserver
+                    sh 'docker exec -d shopdee gunicorn shopdee.wsgi:application --bind 0.0.0.0:8000'
                 }
             }
         }
