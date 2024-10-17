@@ -1,0 +1,67 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %} Product Bid {%endblock %} 
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/product_buy_used.css' %}" />
+{% endblock %} 
+
+{% block content %}
+
+<div class="container">
+  <div class="container-size">
+    {% include '../../collections/previews.html' %}
+
+    <div class="product-content">
+      {% if products %}
+      <!-- แสดงรายการสินค้า -->
+      {% for product in products %}
+      <div
+  class="product-card"
+  data-product-id="{{ product.id }}"
+  data-condition="{{ product.condition }}"
+  data-size="{{size}}"
+  data-collection-id="{{ collection.id }}"
+  data-category="{{ collection.category.name }}"
+>
+  <img src="{{ product.image_url}}" alt="" class="product-image" />
+  <div class="product-details">
+    <p class="product-info">{{ product.id }} {{ product.name }}</p>
+    <p class="product-info">{{ product.condition }}</p>
+    <p class="product-info">{{ product.size }}</p>
+  </div>
+  <p class="product-price">${{ product.price }}</p>
+</div>
+      {% endfor %}
+      {% else %}
+      <!-- แสดงข้อความหากไม่มีสินค้ามือสอง -->
+      <p class="no-collections">There are no used products available at the moment.</p>
+      {% endif %}
+    </div>
+
+  </div>
+  {% include '../../collections/show-reviews.html' %}
+  {% include '../../collections/recommendations.html' %}
+</div>
+
+<script>
+  document.querySelectorAll(".product-card").forEach(function (card) {
+  card.addEventListener("click", function () {
+    const productId = this.dataset.productId;
+    const condition = this.dataset.condition;
+    const selectedSize = this.dataset.size;
+    const collectionId = this.dataset.collectionId;
+    const category = this.dataset.category;
+
+    console.log(productId, condition, selectedSize, collectionId, category);
+
+    if (condition && selectedSize && productId && collectionId && category) {
+      window.location.href = `/product_checkout/?product_id=${productId}&condition=${condition}&size=${selectedSize}&collection_id=${collectionId}&category=${category}`;
+    } else {
+      console.error("Invalid product data");
+      alert("Unable to proceed. Please try again.");
+    }
+  });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Product{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/product-select-size.css' %}" />
+<script src="{% static 'js/product_size.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-detail">
+
+    <div class="container-size">
+        {% include '../collections/previews.html' %}
+        <div class="product-info">
+            <h1>{{ collection.name }}</h1>
+            <p class="product-code">{{ collection.brand.name }} | {{ collection.id }}</p>
+            <p>Size</p>
+            <div class="size-options">
+                {% if collection.category.name == 'Bags' or collection.category.name == 'Accessories' %}
+                    <div class="size-option" data-size="one size">One Size</div>
+                {% else %}
+                    {% if size_options %}
+                        {% for size in size_options %}
+                            <div class="size-option" data-size="{{ size }}">{{ size }}</div>
+                        {% endfor %}
+                    {% else %}
+                        <p>ไม่มีขนาดที่มีให้เลือก</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+    
+            <div class="purchase-options" id="purchase-options" style="display: none;">
+                {% if action == 'sell' %}
+                    <button class="sell-button btn btn-dark d-block rounded-pill mx-auto"
+                        data-collection-id="{{ collection.id }}">Sell</button>
+                {% else %}
+                    <button class="buy-button btn btn-dark d-block rounded-pill mx-auto" 
+                        data-condition="brand_new"
+                        data-collection-id="{{ collection.id }}"
+                        data-category="{{ collection.category.name }}">Buy Brand New</button>
+                    <button class="buy-button btn btn-dark d-block rounded-pill mx-auto" 
+                        data-condition="used"
+                        data-collection-id="{{ collection.id }}"
+                        data-category="{{ collection.category.name }}">Buy Used</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% include '../collections/show-reviews.html' %}
+    {% include '../collections/recommendations.html' %}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'style-sheet/recommendations.css' %}" />
+
+<div class="container-detail">
+  <div class="container-recommendation">
+    <div class="title-recommendations">
+      <h2>You May Also Like</h2>
+    </div>
+
+    {% if random_collections %}
+    <div class="recommendations">
+      {% for collection in random_collections %}
+      <div class="recommend">
+        <a href="{% url 'detail' collection.id %}" class="recommend-info">
+          <div class="recommend-img">
+            <img
+              src="{{ collection.primary_image.image_url }}"
+              alt="{{ collection.name }}"
+            />
+          </div>
+          <div class="recommend-title">{{ collection.name }}</div>
+          <div class="recommend-content-price">
+            <div class="recommend-price-label">Starting From</div>
+            <div class="recommend-price">${{ collection.starting_price }}</div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-recommendations">
+      <p>There are no recommendations at the moment.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+

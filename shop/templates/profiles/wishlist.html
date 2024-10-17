@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% load static %} {% block title %}Profile{% endblock%} {% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/sidebar.css' %}" />
+<link rel="stylesheet" href="{% static 'style-sheet/wishlist.css' %}" />
+{% endblock %} {% block content %}
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-3">{% include "profiles/sidebar.html" %}</div>
+
+    <div class="col-md-8">
+      <div class="container-wishlist">
+        {% if wishlist %}
+        <h4>Wishlist</h4>
+        <div class="product-grid">
+          {% for collection in wishlist %}
+          <div class="product-card">
+            <a href="{% url 'detail' collection.collection.id %}">
+              <div class="product-image-container">
+                {% if collection.primary_image %}
+                <img
+                  src="{{ collection.primary_image.image_url }}"
+                  class="card-img-top"
+                  alt="{{ collection.name }}"
+                />
+                {% else %}
+                <div class="no-image">No Image Available</div>
+                {% endif %}
+                <form
+                  action="{% url 'remove_from_wishlist' collection.collection.id %}"
+                  method="post"
+                >
+                  {% csrf_token %}
+                  <button
+                    type="submit"
+                    class="remove-button"
+                    aria-label="Remove from wishlist"
+                  >
+                    <svg class="trash-icon" viewBox="0 0 24 24">
+                      <path
+                        d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"
+                      ></path>
+                    </svg>
+                  </button>
+                </form>
+              </div>
+              <div class="product-info">
+                <h2 class="product-name">{{ collection.collection.name }}</h2>
+              </div>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-wishlist">
+          <p>No items in your wishlist.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

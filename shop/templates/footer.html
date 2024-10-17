@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Footer</title>
+  <link rel="stylesheet" href="{% static 'style-sheet/footer.css' %}" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Joan:wght@400;700&display=swap">
+</head>
+
+<body>
+  <!-- Footer Section -->
+  <footer class="footer py-5 bg-light">
+    <div class="container">
+      <div class="row">
+        <!-- Column 1: SHOPDEE Description -->
+        <div class="col-md-4">
+          <h5>SHOPDEE</h5>
+          <p>We have clothes that suit your style and which you're proud to wear.</p>
+        </div>
+
+        <!-- Column 2: Company Links -->
+        <div class="col-md-2">
+          <h6>Company</h6>
+          <ul class="list-unstyled">
+            <li><a href="#" class="d-block py-2 text-decoration-none text-dark">About</a></li>
+            <li><a href="#" class="d-block py-2 text-decoration-none text-dark">Careers</a></li>
+            <li><a href="#" class="d-block py-2 text-decoration-none text-dark">Works</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Help Links -->
+        <div class="col-md-2">
+          <h6>Help</h6>
+          <ul class="list-unstyled">
+            <li><a href="#" class="d-block py-2 text-decoration-none text-dark">Customer Support</a></li>
+            <li><a href="#" class="d-block py-2 text-decoration-none text-dark">Delivery</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4: FAQ Links -->
+        <div class="col-md-2">
+          <h6>FAQ</h6>
+          <ul class="list-unstyled">
+            <li><a href="#" class="d-block py-2 text-decoration-none text-dark">Account</a></li>
+            <li><a href="#" class="d-block py-2 text-decoration-none text-dark">Payments</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 5: Social Media Links -->
+        <div class="col-md-2">
+          <h6>Follow Us</h6>
+          <ul class="list-unstyled d-flex">
+            <li><a href="#" class="d-block py-2 text-decoration-none text-dark"><img
+                  src="{% static 'img/social-icon.png' %}" alt="Social"></a></li>
+            <!-- Add other icons as needed -->
+          </ul>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Footer Bottom Section -->
+      <div class="text-center">
+        <p>&copy; 2023 SHOPDEE. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>

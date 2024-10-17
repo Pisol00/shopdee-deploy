@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}New Address{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/sidebar.css' %}" />
+<script src="{% static 'js/newaddress.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            {% include "profiles/sidebar.html" %}
+        </div>
+
+        <div class="col-md-8">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4>Add New Address</h4>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="recipient_name" class="form-label">Recipient Name</label>
+                        <input type="text" name="recipient_name" class="form-control" id="recipient_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="text" name="phone_number" class="form-control" id="phone_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address_line1" class="form-label">Address Line 1</label>
+                        <input type="text" name="address_line1" class="form-control" id="address_line1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address_line2" class="form-label">Address Line 2 (Optional)</label>
+                        <input type="text" name="address_line2" class="form-control" id="address_line2">
+                    </div>
+
+                    <!-- Province dropdown -->
+                    <div class="mb-3">
+                        <label for="province" class="form-label">Province</label>
+                        <select name="province" class="form-select select2" id="province" required>
+                            <option value="">Select Province</option>
+                            {% for province in provinces %}
+                            <option value="{{ province.id }}" data-name="{{ province.name_en }}">{{ province.name_en }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- District dropdown -->
+                    <div class="mb-3">
+                        <label for="district" class="form-label">District</label>
+                        <select name="district" class="form-select select2" id="district" required>
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+
+                    <!-- Subdistrict dropdown -->
+                    <div class="mb-3">
+                        <label for="subdistrict" class="form-label">Subdistrict</label>
+                        <select name="subdistrict" class="form-select select2" id="subdistrict" required>
+                            <option value="">Select Subdistrict</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" name="province_name" id="province_name">
+                    <input type="hidden" name="district_name" id="district_name">
+                    <input type="hidden" name="subdistrict_name" id="subdistrict_name">
+
+                    <div class="mb-3">
+                        <label for="postal_code" class="form-label">Postal Code</label>
+                        <input type="text" name="postal_code" class="form-control" id="postal_code" required readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" name="country" class="form-control" id="country" value="Thailand" readonly>
+                    </div>
+                    <button type="submit" class="btn btn-dark btn-sm d-block rounded-pill mx-auto">Save Address</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

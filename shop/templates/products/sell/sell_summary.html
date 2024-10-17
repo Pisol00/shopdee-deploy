@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Product{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/sell-summary.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="container-sell">
+  <div class="product-details">
+    <img
+      src="/placeholder.svg?height=100&width=100"
+      alt="One Life Graphic T-shirt"
+      class="product-image"
+    />
+    <h1>{{collection.name}}</h1>
+    <p class="subtitle">{{collection.colorway}}</p>
+    <div class="detail-row">
+      <span>Size</span>
+      <span>{{ sell_data.size }}</span>
+    </div>
+    <div class="detail-row">
+      <span>Condition</span>
+      {% if sell_data.has_defect == 'True' %}
+      <span>Used</span>
+      {% else %}
+      <span>New</span>
+      {% endif %}
+    </div>
+    <div class="detail-row">
+      <span>Equipment</span>
+      <span>{{ sell_data.equipment }}</span>
+    </div>
+    <div class="detail-row">
+      <span>Ask Price</span>
+      <span>$ {{ sell_data.price }}</span>
+    </div>
+  </div>
+  <div class="checkout-details">
+    <div class="payout-method">
+      <span>Payout method</span>
+      <span>></span>
+    </div>
+    <div class="costs">
+      <div class="detail-row">
+        <span>Subtotal</span>
+        <span>${{ sell_data.price }}</span>
+      </div>
+      <div class="detail-row">
+        <span>Shipping fee</span>
+        <span>$-</span>
+      </div>
+      <div class="detail-row">
+        <span>Transaction fee (7.0%)</span>
+        <span>${{ transaction_fee|floatformat:2 }}</span>
+      </div>
+      <div class="detail-row">
+        <span>Payment processing fee (3.0%)</span>
+        <span>${{ processing_fee|floatformat:2 }}</span>
+      </div>
+      <div class="detail-row total-payout">
+        <span>Total payout</span>
+        <span>${{ total_payout|floatformat:2 }}</span>
+      </div>
+    </div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="size" value="{{ sell_data.size }}">
+      <input type="hidden" name="price" value="{{ sell_data.price }}">
+      <input type="hidden" name="has_defect" value="{{ sell_data.has_defect }}">
+      <input type="hidden" name="equipment" value="{{ sell_data.equipment }}">
+      <button class="submit-btn" type="submit">Sell</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
