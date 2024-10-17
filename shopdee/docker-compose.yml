@@ -16,7 +16,7 @@ services:
     depends_on:
       - db  # รอให้ db พร้อมก่อนเริ่ม web
     environment:
-      DATABASE_URL: postgres://postgres:1234@db:5432/shopdee_db  # การตั้งค่าการเชื่อมต่อฐานข้อมูล
+      DATABASE_URL: postgres://postgres:1234@34.87.47.244:5432/shopdee_db # การตั้งค่าการเชื่อมต่อฐานข้อมูล
     volumes:
       - .:/app  # แมพพอร์ตโฟลเดอร์ปัจจุบันไปยังคอนเทนเนอร์
     command: python manage.py runserver 0.0.0.0:8000  # คำสั่งเริ่มต้นสำหรับ Django
