@@ -86,13 +86,14 @@ WSGI_APPLICATION = 'shopdee.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': url.path[1:],  # ชื่อฐานข้อมูล
-        'USER': url.username,  # ชื่อผู้ใช้
-        'PASSWORD': url.password,  # รหัสผ่าน
-        'HOST': url.hostname,  # โฮสต์
-        'PORT': url.port,  # พอร์ต
+        'NAME': 'shopdee_db',
+        'USER': 'postgres',
+        'PASSWORD': '1234',
+        'HOST': 'db',  # ชื่อบริการที่ระบุใน docker-compose.yml
+        'PORT': '5432',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

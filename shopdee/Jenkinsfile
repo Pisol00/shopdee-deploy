@@ -9,17 +9,18 @@ pipeline {
     stages {
         stage('Start Jenkins') {
             steps {
-                sh 'echo Start Jenkins for Django............'
-                sh 'echo docker : user = $DOCKER_CREDENTIALS_USR : password = $DOCKER_CREDENTIALS_PSW'
+                echo 'Starting Jenkins for Django...'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 dir('./shopdee') {
-                    sh 'echo "Running in $(pwd)"'
-                    sh 'echo start build the Docker image = $DOCKER_IMAGE'
-                    sh 'docker build -t $DOCKER_IMAGE .'
+                    script {
+                        echo "Running in ${pwd()}"
+                        echo "Starting to build the Docker image: ${DOCKER_IMAGE}"
+                        sh "docker build -t ${DOCKER_IMAGE} ."
+                    }
                 }
             }
         }
@@ -27,8 +28,10 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    sh 'echo $DOCKER_CREDENTIALS_PSW | docker login --username $DOCKER_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push $DOCKER_IMAGE'
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_CREDENTIALS_USR', passwordVariable: 'DOCKER_CREDENTIALS_PSW')]) {
+                        sh 'echo $DOCKER_CREDENTIALS_PSW | docker login --username $DOCKER_CREDENTIALS_USR --password-stdin'
+                        sh "docker push ${DOCKER_IMAGE}"
+                    }
                 }
             }
         }
@@ -36,8 +39,8 @@ pipeline {
         stage('Clear Docker Components') {
             steps {
                 script {
-                    sh 'docker stop $(docker ps -q) || true'  
-                    sh 'docker rm $(docker ps -q) || true' 
+                    sh 'docker stop shopdee || true'
+                    sh 'docker rm shopdee || true' 
                     sh 'docker rmi $(docker images -q) || true'
                     sh 'docker system prune -af'
                 }
@@ -47,14 +50,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh 'docker pull $DOCKER_IMAGE'
-                    // รัน Docker container
-                    sh 'docker run -d --name shopdee -p 8000:8000 $DOCKER_IMAGE'
-                    // รัน migrations
-                    sh 'docker exec shopdee python manage.py migrate' 
-                    // รันเซิร์ฟเวอร์ Django
-                    // เปลี่ยนไปใช้ gunicorn แทน runserver
-                    sh 'docker exec -d shopdee gunicorn shopdee.wsgi:application --bind 0.0.0.0:8000'
+                    sh "docker pull ${DOCKER_IMAGE}"
+                    sh "docker run -d --name shopdee -p 8000:8000 ${DOCKER_IMAGE}"
+                    sh "docker exec shopdee python manage.py migrate" 
+                    sh "docker exec -d shopdee gunicorn shopdee.wsgi:application --bind 0.0.0.0:8000"
                 }
             }
         }
@@ -62,7 +61,9 @@ pipeline {
 
     post {
         always {
-            sh 'docker logout'
+            script {
+                sh 'docker logout || true'
+            }
         }
     }
 }
