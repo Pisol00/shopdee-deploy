@@ -1,55 +1,30 @@
 pipeline {
-    agent any
-
-    environment {
-        DOCKER_IMAGE = 'pisol00/shopdee:latest'
-        DOCKER_CREDENTIALS = credentials('dockerhub') // ใช้ Docker Hub credentials
-    }
+    agent any 
 
     stages {
-        stage('Start Jenkins') {
+        stage('Build') {
             steps {
-                sh 'echo Starting Jenkins for Django....'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                dir('./shopdee') { // เปลี่ยนไปที่ directory ของโปรเจค
-                    sh 'echo "Running in $(pwd)"'
-                    sh 'echo Starting to build the Docker image: $DOCKER_IMAGE'
-                    sh 'docker build -t $DOCKER_IMAGE .'
+                script {
+                    // สร้าง Docker image
+                    sh 'docker build -t shopdee:latest .'
                 }
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Test') {
             steps {
                 script {
-                    sh 'echo $DOCKER_CREDENTIALS_PSW | docker login --username $DOCKER_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push $DOCKER_IMAGE'
+                    // รัน Docker container สำหรับการทดสอบ
+                    sh 'docker run --rm shopdee:latest python manage.py test'
                 }
             }
         }
 
-        stage('Clear Docker Components') {
+        stage('Run Server') {
             steps {
                 script {
-                    sh 'docker stop shopdee || true'  // หยุด container shopdee ถ้ามี
-                    sh 'docker rm shopdee || true' // ลบ container shopdee ถ้ามี
-                    sh 'docker rmi $(docker images -q) || true' // ลบ images ทั้งหมด
-                    sh 'docker system prune -af' // ทำความสะอาด Docker
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    sh 'docker pull $DOCKER_IMAGE' // ดึง image ล่าสุด
-                    sh 'docker run -d --name shopdee -p 8000:8000 $DOCKER_IMAGE' // รัน container
-                    sh 'docker exec shopdee python manage.py migrate' // รัน migrations
-                    sh 'docker exec -d shopdee gunicorn shopdee.wsgi:application --bind 0.0.0.0:8000' // รัน gunicorn
+                    // รัน Django server ใน Docker
+                    sh 'docker run -d -p 8000:8000 shopdee:latest python manage.py runserver 0.0.0.0:8000'
                 }
             }
         }
@@ -57,7 +32,9 @@ pipeline {
 
     post {
         always {
-            sh 'docker logout' // ออกจากระบบ Docker
+            // ทำความสะอาด container
+            sh 'docker stop $(docker ps -q --filter ancestor=shopdee:latest) || true'
+            sh 'docker rmi shopdee:latest || true'
         }
     }
 }
