@@ -1133,68 +1133,69 @@ class CartView(LoginRequiredMixin, View):
     """แสดงสินค้าที่อยู่ในตะกร้า"""
     
     def get(self, request):
-        cart = get_object_or_404(Cart, user=request.user)  # รับตะกร้าของผู้ใช้
-        cart_items = cart.items.all()  # ดึงรายการสินค้าจากตะกร้า
+        cart = get_object_or_404(Cart, user=request.user)
+        cart_items = cart.items.all()  # ดึงรายการสินค้าทั้งหมดในตะกร้า
         
-        # คำนวณจำนวนรวมของสินค้าในตะกร้า
+        # คำนวณจำนวนรวมของสินค้าที่อยู่ในตะกร้า
         total_quantity = sum(item.quantity for item in cart_items)  
         
-        # คำนวณจำนวนเงินรวมทั้งหมด
+        # คำนวณจำนวนเงินรวมทั้งหมดของสินค้า
         total_amount = sum(item.product.price * item.quantity for item in cart_items)
 
-        # สร้าง context สำหรับส่งข้อมูลไปยัง template
+        
         context = {
-            'cart_items': cart_items,
+            'cart_items': cart_items, 
             'total_quantity': total_quantity,
-            'total_amount': total_amount,  # เพิ่มจำนวนเงินรวมเข้าไปใน context
+            'total_amount': total_amount,
         }
         
-        return render(request, 'cart.html', context)  # แสดงผลหน้าตะกร้า
+        return render(request, 'cart.html', context)
 
 class AddToCartView(LoginRequiredMixin, View):
     """เพิ่มสินค้าในตะกร้า"""
     
     def post(self, request, product_id):
-        # รับหรือสร้างตะกร้าสินค้าสำหรับผู้ใช้
-        cart, created = Cart.objects.get_or_create(user=request.user)
+        # รับตะกร้าสำหรับผู้ใช้
+        cart = Cart.objects.get(user=request.user)
         
-        # ค้นหาสินค้าโดยใช้ product_id
+        # ค้นหาสินค้าที่จะเพิ่มโดยใช้ product_id
         product = get_object_or_404(Product, id=product_id)
         
-        # รับหรือสร้างรายการในตะกร้า
+        # รับหรือสร้างรายการสินค้าในตะกร้า
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         
-        # เพิ่มจำนวนถ้าสินค้าอยู่ในตะกร้าแล้ว
+        # ถ้าสินค้าอยู่ในตะกร้าแล้ว ให้เพิ่มจำนวนเป็น 1
         if not created:
             cart_item.quantity = 1 
         
-        # บันทึกการเปลี่ยนแปลง
+        
         cart_item.save()
 
-        # ส่งคืนการเปลี่ยนเส้นทางไปยังหน้าตะกร้า
-        return redirect('cart')  # ส่งคืนวัตถุ HttpResponse
+       
+        return redirect('cart')
 
 class RemoveFromCartView(LoginRequiredMixin, View):
-    """Remove an item from the cart."""
+    """ลบสินค้าจากตะกร้า"""
 
     def post(self, request, item_id):
+        # รับรายการสินค้าที่จะลบโดยใช้ item_id และตรวจสอบว่าอยู่ในตะกร้าของผู้ใช้นี้
         cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
-        cart_item.delete()  # Remove the item from the cart
+        cart_item.delete()  # ลบรายการสินค้าจากตะกร้า
 
-        return redirect('cart')  # Redirect back to the cart page
+        return redirect('cart')  # ส่งคืนไปยังหน้าตะกร้า
 
 class ClearCartView(LoginRequiredMixin, View):
-    """Clear all items from the cart."""
+    """ลบสินค้าทั้งหมดในตะกร้า"""
 
     def post(self, request):
         # รับตะกร้าของผู้ใช้
         cart = Cart.objects.filter(user=request.user).first()
 
         if cart:
-            # ลบรายการในตะกร้า
+            # ลบรายการทั้งหมดในตะกร้า
             cart.items.all().delete()
 
-        # Redirect ไปยังหน้าอื่น (เช่น หน้าแสดงตะกร้าหรือหน้าแรก)
-        return redirect('cart')  # เปลี่ยน 'cart_view' เป็น URL name ที่ต้องการ
+        # เปลี่ยนเส้นทางไปยังหน้าตะกร้า
+        return redirect('cart')  # ส่งคืนไปยังหน้าตะกร้า
     
 
