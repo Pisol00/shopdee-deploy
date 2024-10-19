@@ -513,7 +513,9 @@ class ChangePasswordView(LoginRequiredMixin, View):
     
 
 
-class GetDistrictsView(View):
+class GetDistrictsView(LoginRequiredMixin, View):
+    login_url = "/login/"
+    
     def get(self, request, province_id):
         district_file = os.path.join(settings.BASE_DIR, 'shop', 'data', 'thai_district.json')
 
@@ -524,7 +526,9 @@ class GetDistrictsView(View):
 
         return JsonResponse({'districts': filtered_districts})
 
-class GetSubdistrictsView(View):
+class GetSubdistrictsView(LoginRequiredMixin, View):
+    login_url = "/login/"
+    
     def get(self, request, district_id):
         subdistrict_file = os.path.join(settings.BASE_DIR, 'shop', 'data', 'thai_subdistrict.json')
 
@@ -539,7 +543,9 @@ class GetSubdistrictsView(View):
     
 
 
-class ProductSelectSizeView(View):
+class ProductSelectSizeView(LoginRequiredMixin, View):
+    login_url = "/login/"
+    
     def get_size_options(self, category_name, collection):
         """Returns sorted size options based on the product category and availability, excluding products with orders."""
         if category_name == "Apparel":
@@ -754,6 +760,8 @@ class ProductCheckoutView(LoginRequiredMixin, View):
             return redirect(request.path)
 
 class CheckoutCartView(LoginRequiredMixin, View):
+    login_url = "/login/"
+    
     def get(self, request):
         cart = Cart.objects.filter(user=request.user).first()
         if cart:
@@ -835,10 +843,6 @@ class PaymentSuccessView(LoginRequiredMixin,View):
             'payment': payment,
             'order': order
         })
-        
-class ProductBidView(View):
-    def get(self, request):
-        return render(request, "product_bid.html")
     
 class SellDetailView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = "/login/"
@@ -1044,6 +1048,8 @@ class WishListView(LoginRequiredMixin, View):
         return render(request, "profiles/wishlist.html", context)
 
 class RemoveFromWishlistView(LoginRequiredMixin, View):
+    login_url = "/login/"
+    
     def post(self, request, collection_id):
         wishlist = get_object_or_404(Wishlist, user=request.user)
         collection = get_object_or_404(Collection, id=collection_id)
@@ -1053,6 +1059,8 @@ class RemoveFromWishlistView(LoginRequiredMixin, View):
         return redirect('wishlist')
 
 class AddToWishlistView(LoginRequiredMixin, View):
+    login_url = "/login/"
+    
     def get(self, request, collection_id):
         collection = get_object_or_404(Collection, id=collection_id)
         wishlist, created = Wishlist.objects.get_or_create(user=request.user)
@@ -1064,12 +1072,6 @@ class AddToWishlistView(LoginRequiredMixin, View):
         # ถ้ายังไม่มีใน Wishlist ให้เพิ่ม
         wishlist.collections.add(collection)
         return JsonResponse({'status': 'added'})
-
-    
-class SizelistView(View):
-    def get(self, request):
-        return render(request, "./products/size-list.html")
-
 
 class ProductReviewView(LoginRequiredMixin, View):
     login_url = "/login/"
@@ -1120,7 +1122,8 @@ class OrderDetailView(LoginRequiredMixin, View):
         return render(request, 'profiles/buying/order-detail.html', context)
 
 class SellingDetailView(LoginRequiredMixin, View):
-
+    login_url = '/login/'
+    
     def get(self, request, selling_id):
         # ดึงข้อมูลการขายที่ตรงกับ selling_id
         sale = get_object_or_404(Sale, id=selling_id)
