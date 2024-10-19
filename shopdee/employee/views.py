@@ -16,7 +16,7 @@ class EmployeeDashboardView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request):
         collections_with_sales = Collection.objects.annotate(
             total_sales=Count('product__sales')
-        ).order_by('-total_sales')[:5]
+        ).order_by('-total_sales')
         # สร้างลิสต์เพื่อเก็บข้อมูลคอลเลกชันและขนาดที่ขายได้ดีที่สุด
         collection_data = []
         for collection in collections_with_sales:
