@@ -169,7 +169,6 @@ class ExploreView(View):
 
 class CollectionDetailView(LoginRequiredMixin, View):
     login_url = "/login/"
-    permission_required = 'shop.add_product'
     
     def get(self, request, collection_id):
         # ดึงคอลเล็กชันหรือคืนค่า 404 ถ้าไม่พบ
