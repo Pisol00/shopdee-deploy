@@ -137,8 +137,9 @@ class ProductReview(models.Model):
     comment = models.TextField()
     review_date = models.DateTimeField(auto_now_add=True)
 
-    #class Meta:
-        #unique_together = ('product', 'user')  # เพิ่มข้อกำหนดให้ผู้ใช้สามารถรีวิวสินค้าหนึ่งได้เพียงครั้งเดียว
+    class Meta:
+        model = ProductReview
+        fields = ['rating', 'comment']
 
     def __str__(self):
         return f'Review for {self.product.collection.name} by {self.user.username}'
@@ -238,12 +239,3 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f'{self.product.collection.name} - Quantity: {self.quantity} in cart of {self.cart.user.username}'
-
-# class Bid(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bids')  # ผู้ใช้ที่ทำการประมูล
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='bids')  # สินค้าที่ประมูล
-#     bid_amount = models.DecimalField(max_digits=10, decimal_places=2)  # จำนวนเงินที่บิด
-#     bid_time = models.DateTimeField(auto_now_add=True)  # วันที่และเวลาที่บิด
-
-#     def __str__(self):
-#         return f"Bid by {self.user.username} for {self.product.collection.name} - Amount: {self.bid_amount}"
