@@ -15,10 +15,10 @@
             {% include "profiles/sidebar.html" %}
         </div>
 
-        <div class="col-md-9"> <!-- ปรับขนาดของคอลัมน์ให้กว้างขึ้น -->
+        <div class="col-md-9">
             <h4 class="mb-4">Buying</h4>
 
-            <ul class="nav nav-tabs mb-4"> <!-- เพิ่ม margin bottom -->
+            <ul class="nav nav-tabs mb-4">
                 <li class="nav-item">
                     <a class="nav-link fw-semibold text-dark {% if current_status == 'Pending' %}active fw-bold{% endif %}" href="?status=Pending&search={{ search_query }}">Pending</a>
                 </li>
@@ -37,17 +37,17 @@
             </ul>
 
             <div class="card p-4">
-                <form method="get" class="d-flex justify-content-between align-items-center mb-4"> <!-- เพิ่ม margin bottom -->
-                    <input type="text" name="search" class="form-control w-50" placeholder="Search by Product Name, Order ID" value="{{ search_query }}">
+                <form method="get" class="d-flex justify-content-between align-items-center mb-4">
+                    <input type="text" name="search" class="form-control w-50" placeholder="Search by Collection Name, Order ID" value="{{ search_query }}">
                     <input type="hidden" name="status" value="{{ current_status }}">
-                    <button type="submit" class="btn btn-primary">Search</button> <!-- เพิ่มปุ่มค้นหา -->
+                    <button type="submit" class="btn btn-primary">Search</button>
                 </form>
 
                 <table class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">Order ID</th>
-                            <th scope="col">Product Name</th>
+                            <th scope="col">Collection Name</th>
                             <th scope="col">Date</th>
                             <th scope="col">Status</th>
                             <th scope="col">Price</th>
