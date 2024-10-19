@@ -845,7 +845,7 @@ class SellDetailView(LoginRequiredMixin, PermissionRequiredMixin, View):
             'images': collection.images.all()
         })
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         try:
             collection_id = request.GET.get('collection_id')
             size = request.POST.get('size')
