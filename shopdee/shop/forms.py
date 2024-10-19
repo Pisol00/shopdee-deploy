@@ -155,7 +155,7 @@ class ProductReviewForm(forms.ModelForm):
             ),
         }
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         super().__init__()
         # เพิ่มการตั้งค่า CSS ให้กับฟิลด์
         for field in self.fields.values():
