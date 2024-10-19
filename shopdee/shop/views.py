@@ -1156,7 +1156,7 @@ class AddToCartView(LoginRequiredMixin, View):
     
     def post(self, request, product_id):
         # รับตะกร้าสำหรับผู้ใช้
-        cart = Cart.objects.get(user=request.user)
+        cart, created = Cart.objects.get_or_create(user=request.user)
         
         # ค้นหาสินค้าที่จะเพิ่มโดยใช้ product_id
         product = get_object_or_404(Product, id=product_id)
