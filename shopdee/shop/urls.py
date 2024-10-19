@@ -22,7 +22,6 @@ urlpatterns = [
     path('get_subdistricts/<int:district_id>/', views.GetSubdistrictsView.as_view(), name='get_subdistricts'),
     path("explore/", views.ExploreView.as_view(), name="explore"),
     path("collection/<int:collection_id>/", views.CollectionDetailView.as_view(), name="detail"),
-    path('sell_list/', views.SizelistView.as_view(), name='sell_list'),
     path('product/<int:product_id>/review/', views.ProductReviewView.as_view(), name='product_review'),
     path("product_bid/", views.ProductBidView.as_view(), name="product_bid"),
     path("product_checkout/", views.ProductCheckoutView.as_view(), name="product_checkout"),
