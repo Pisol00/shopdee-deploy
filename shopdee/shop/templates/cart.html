@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load humanize %}
 {% block title %}Shopping Cart{% endblock %}
 
 {% block content %}
@@ -51,7 +51,7 @@
                             {% endif %}
                         </td>
                         <td>{{ item.quantity }}</td>
-                        <td>${{ item.product.price|floatformat:2 }}</td>
+                        <td>฿{{ item.product.price|floatformat:2|intcomma }}</td>
                         <td>
                             <form action="{% url 'remove_from_cart' item.id %}" method="post">
                                 {% csrf_token %}
@@ -68,7 +68,7 @@
             <div class="mt-4">
                 <div class="d-flex flex-column">
                     <h6 class="mb-2">Total Quantity: {{ total_quantity }} items</h6>
-                    <h6>Total Amount: ${{ total_amount|floatformat:2 }}</h6>
+                    <h6>Total Amount: ฿{{ total_amount|floatformat:2|intcomma }}</h6>
                 </div>
             </div>
 

@@ -9,7 +9,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class BrandAdmin(admin.ModelAdmin):
     form = BrandForm
-    list_display = ['name', 'description']
+    list_display = ['name', 'description', 'img_url']
     search_fields = ['name']
 
 class CollectionAdmin(admin.ModelAdmin):

@@ -1,5 +1,3 @@
-/* sell-summary.css */
-
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f7f9fc;
@@ -9,33 +7,31 @@ body {
 
 .container-main {
   display: flex;
-  justify-content: center; /* จัดกลางในแนวนอน */
-  max-width: 1200px;
-  margin: 20px auto; /* จัดกลางด้วย auto */
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  width: 1200px; /* เปลี่ยน max-width เป็น width เพื่อให้เต็มกรอบ */
+  margin: 0 auto;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .checkout-container {
   display: flex;
   justify-content: space-between;
-  width: 100%; /* ทำให้เต็มพื้นที่ */
-  gap: 20px; /* ช่องว่างระหว่างสองฝั่ง */
+  width: 100%; /* กำหนดให้เต็มกรอบ */
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* เพิ่มเงาเพื่อให้ดูมีมิติ */
 }
 
 .product-details {
-  flex: 2; /* ให้ฝั่งรายละเอียดสินค้ามากกว่าฝั่งการชำระเงิน */
-  padding: 20px;
-  border-right: 2px solid #e5e5e5; /* เส้นแบ่งระหว่างสองฝั่ง */
-}
-
-.checkout-details {
-  flex: 1; /* ให้ฝั่งชำระเงินเต็มพื้นที่ */
-  padding: 20px;
-  border-radius: 8px; /* มุมโค้ง */
-  background-color: #f9f9f9; /* พื้นหลังของรายละเอียดการชำระเงิน */
+  flex: 2;
+  margin-right: 20px;
+  border-right: 2px solid #e5e5e5;
+  padding-right: 20px;
 }
 
 .product-info {
@@ -84,6 +80,10 @@ h4 {
 
 .payment-method {
   margin-bottom: 20px;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
 .payment-option {
@@ -96,6 +96,10 @@ h4 {
   width: 50px;
   height: auto;
   margin-right: 8px;
+}
+
+.payment-details {
+  margin-bottom: 20px;
 }
 
 .form-group {
@@ -123,11 +127,10 @@ h4 {
 }
 
 .costs {
-  background: #fff; /* เปลี่ยนพื้นหลังให้เป็นสีขาว */
+  background: #f9f9f9;
   padding: 15px;
   border-radius: 5px;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-  margin-top: 20px; /* เพิ่มช่องว่างด้านบน */
 }
 
 .detail-row {
@@ -138,7 +141,7 @@ h4 {
 
 .total-payout {
   font-weight: bold;
-  color: #d83030;
+  color: #28a745;
 }
 
 .submit-btn {
@@ -151,7 +154,6 @@ h4 {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-top: 20px; /* เพิ่มช่องว่างด้านบน */
 }
 
 .submit-btn:hover {
@@ -182,10 +184,16 @@ h4 {
   background-color: #e6b839;
 }
 
+.paypal-logo {
+  width: 100px;
+  height: auto;
+  margin-right: 8px;
+}
+
 .preview-images {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 15px;
   margin-top: 15px;
 }
 
@@ -198,8 +206,14 @@ h4 {
   width: 100px;
   height: 100px;
   object-fit: cover;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.preview-image:hover {
+  transform: scale(1.05);
 }
 
 .remove-button {
@@ -212,6 +226,14 @@ h4 {
   border-radius: 50%;
   cursor: pointer;
   font-size: 14px;
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.remove-button:hover {
+  background-color: darkred;
 }

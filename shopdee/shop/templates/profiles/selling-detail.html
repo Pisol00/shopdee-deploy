@@ -34,21 +34,6 @@
                     </div>
                 </div>
             </div>
-
-            <h5>Payment Information</h5>
-            {% for payment in payments %} <!-- Display Payment Information -->
-                <div class="border rounded p-4 mb-4"> <!-- Add bottom margin here -->
-                    <p><strong>Payment Method:</strong> {{ payment.payment_method|capfirst }}</p>
-                    <p><strong>Amount:</strong> {{ payment.amount }} THB</p>
-                    <p><strong>Payment Status:</strong> {{ payment.status }}</p>
-                    <p><strong>Payment Date:</strong> {{ payment.payment_date|date:"d M Y H:i" }}</p>
-                </div>
-            {% empty %}
-                <div class="border rounded p-4 mb-4">
-                    <p>No payment information available</p> <!-- Display message when no payment information -->
-                </div>
-            {% endfor %}
-
         </div>
     </div>
 

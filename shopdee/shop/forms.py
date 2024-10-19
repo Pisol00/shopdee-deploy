@@ -112,7 +112,7 @@ class CategoryForm(forms.ModelForm):
 class BrandForm(forms.ModelForm):
     class Meta:
         model = Brand
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'img_url']
 
 
 class CollectionForm(forms.ModelForm):
