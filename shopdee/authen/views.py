@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.views import View
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .forms import RegistrationForm 
+from shop.models import Cart
 
 
 class LoginView(View):
@@ -41,6 +42,10 @@ class RegisterView(View):
             user = form.save(commit=False)  # Don't save the user yet
             user.set_password(form.cleaned_data['password1'])  # Set the password
             user.save()  # Now save the user to the database
+            
+            # Create a new cart for the user
+            Cart.objects.create(user=user)  # สร้างตะกร้าสำหรับผู้ใช้ใหม่
+            
             login(request, user)  # Log the user in after registration
             return redirect('homepage')  # Redirect to the login page after successful registration
         else:

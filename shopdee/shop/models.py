@@ -113,7 +113,7 @@ class Product(models.Model):
 
 class CollectionImage(models.Model):
     collection = models.ForeignKey(Collection, related_name='images', on_delete=models.CASCADE)
-    image_url = models.URLField()  # หรือใช้ ImageField ถ้าต้องการเก็บไฟล์ภาพ
+    image_url = models.URLField()# หรือใช้ ImageField ถ้าต้องการเก็บไฟล์ภาพ
     is_primary = models.BooleanField(default=False)  # เพื่อระบุภาพหลัก
 
     def __str__(self):
@@ -122,7 +122,9 @@ class CollectionImage(models.Model):
 
 class UsedProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE) 
-    image_url = models.URLField()  
+    image = models.ImageField(upload_to='uploads/')
+    created_at = models.DateTimeField(auto_now_add=True)  # วันเวลาที่สร้าง
+    updated_at = models.DateTimeField(auto_now=True)  # วันเวลาที่อัปเดตล่าสุด
 
     def __str__(self):
         return f'User-uploaded Image for {self.product.collection.name}'
@@ -219,3 +221,29 @@ class Payment(models.Model):
 
     def __str__(self):
         return f'Payment {self.id} - Order {self.order.id} - {self.amount}'
+    
+    
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts')  # ผู้ใช้ที่เกี่ยวข้อง
+    created_at = models.DateTimeField(auto_now_add=True)  # วันที่สร้างตะกร้า
+    updated_at = models.DateTimeField(auto_now=True)  # วันที่อัปเดตล่าสุด
+
+    def __str__(self):
+        return f'Cart for {self.user.username}'
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')  # ตะกร้าสินค้าที่เชื่อมโยง
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # สินค้าที่เลือกในตะกร้า
+    quantity = models.PositiveIntegerField(default=1)  # จำนวนของสินค้าที่เพิ่มในตะกร้า
+
+    def __str__(self):
+        return f'{self.product.collection.name} - Quantity: {self.quantity} in cart of {self.cart.user.username}'
+
+# class Bid(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bids')  # ผู้ใช้ที่ทำการประมูล
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='bids')  # สินค้าที่ประมูล
+#     bid_amount = models.DecimalField(max_digits=10, decimal_places=2)  # จำนวนเงินที่บิด
+#     bid_time = models.DateTimeField(auto_now_add=True)  # วันที่และเวลาที่บิด
+
+#     def __str__(self):
+#         return f"Bid by {self.user.username} for {self.product.collection.name} - Amount: {self.bid_amount}"

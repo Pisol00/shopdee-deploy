@@ -49,34 +49,35 @@
   background-color: #000;
   padding: 20px;
 }
-.section-band {
-  background-color: #000; /* สีพื้นหลังของ section */
-  padding: 20px; /* ช่องว่างด้านใน */
-}
 
-.brand-container {
-  display: flex; /* ใช้ Flexbox */
-  flex-wrap: wrap; /* อนุญาตให้โลโก้ขึ้นบรรทัดใหม่ */
-  justify-content: center; /* จัดกลางโลโก้ */
-  gap: 20px; /* ระยะห่างระหว่างโลโก้ */
+.band-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .brand-logo {
-  display: flex; /* ใช้ Flexbox ในการจัดเรียงโลโก้ */
-  flex-wrap: wrap; /* อนุญาตให้โลโก้ขึ้นบรรทัดใหม่ */
-  
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* ระยะห่างระหว่างโลโก้ */
 }
 
 .brand-logo a {
-  flex: 1 1 100px; /* ขนาดโลโก้เริ่มต้น 100px และยืดหยุ่นได้ */
-  max-width: 120px; /* ความกว้างสูงสุดของโลโก้ */
-  text-align: center; /* จัดกลางภาพ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px; /* กำหนดความกว้างให้คงที่ */
+  height: 120px; /* กำหนดความสูงให้คงที่ */
+  text-align: center;
 }
 
 .brand-logo img {
-  max-width: 50%; /* ทำให้ภาพมีความกว้างสูงสุดไม่เกิน 100% ของ container */
-  height: auto; /* รักษาสัดส่วนของภาพ */
+  max-width: 100%; /* กำหนดให้ภาพขยายเต็มพื้นที่ของลิงก์ */
+  height: auto;
 }
+
 
 .section-arrivals {
   padding: 5rem 0; /* เพิ่มช่องว่างด้านบนและด้านล่าง */

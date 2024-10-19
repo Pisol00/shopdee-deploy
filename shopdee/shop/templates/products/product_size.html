@@ -26,7 +26,7 @@
                             <div class="size-option" data-size="{{ size }}">{{ size }}</div>
                         {% endfor %}
                     {% else %}
-                        <p>ไม่มีขนาดที่มีให้เลือก</p>
+                        <p>ไม่มีขนาดที่สามารถเลือกได้</p>
                     {% endif %}
                 {% endif %}
             </div>
@@ -36,14 +36,18 @@
                     <button class="sell-button btn btn-dark d-block rounded-pill mx-auto"
                         data-collection-id="{{ collection.id }}">Sell</button>
                 {% else %}
-                    <button class="buy-button btn btn-dark d-block rounded-pill mx-auto" 
-                        data-condition="brand_new"
-                        data-collection-id="{{ collection.id }}"
-                        data-category="{{ collection.category.name }}">Buy Brand New</button>
-                    <button class="buy-button btn btn-dark d-block rounded-pill mx-auto" 
-                        data-condition="used"
-                        data-collection-id="{{ collection.id }}"
-                        data-category="{{ collection.category.name }}">Buy Used</button>
+                    {% if has_brand_new %}
+                        <button class="buy-button btn btn-dark d-block rounded-pill mx-auto" 
+                            data-condition="brand_new"
+                            data-collection-id="{{ collection.id }}"
+                            data-category="{{ collection.category.name }}">Buy Brand New</button>
+                    {% endif %}
+                    {% if has_used %}
+                        <button class="buy-button btn btn-dark d-block rounded-pill mx-auto" 
+                            data-condition="used"
+                            data-collection-id="{{ collection.id }}"
+                            data-category="{{ collection.category.name }}">Buy Used</button>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

@@ -39,6 +39,14 @@
         <!-- Navbar Items (User Profile, Cart) -->
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           {% if user.is_authenticated %}
+                    <!-- Add to Cart Icon -->
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'cart' %}">
+                        <i class="bi bi-cart"></i>
+                        <span class="badge bg-danger">{{ request.user.cart.total_items }}</span>
+                      </a>
+                    </li>
+                    
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">

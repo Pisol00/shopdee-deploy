@@ -1,7 +1,3 @@
-.swal2-title {
-  font-size: 1.2rem; /* ปรับขนาดฟอนต์ที่นี่ */
-}
-
 .container-detail {
   max-width: 1200px; /* ขนาดสูงสุดของ container */
   margin: 0 auto; /* จัดกลาง */

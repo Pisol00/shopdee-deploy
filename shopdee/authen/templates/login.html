@@ -6,10 +6,6 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 {% endblock %}
 
-{% block head %}
-<h1>Login</h1>
-{% endblock %} 
-
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center vh-50 mt-5 mb-5">
     <div class="card shadow-lg" style="width: 30rem;">
@@ -18,16 +14,36 @@
             <p class="card-text text-center">Enter your details below</p>
             <form method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
-                <div class="form-group">
+                
+                <!-- Username -->
+                <div class="mb-3">
                     <label for="username">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
-                    {{ form.username.errors }}
+                    <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                           id="username" name="username" placeholder="Username" required>
+                    {% for error in form.username.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
-                <div class="form-group">
+
+                <!-- Password -->
+                <div class="mb-3">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                    {{ form.password.errors }}
+                    <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                           id="password" name="password" placeholder="Password" required>
+                    {% for error in form.password.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
+
+                <!-- General form errors -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
                 <button type="submit" class="btn btn-dark btn-block">Log In</button>
             </form>
             <p class="login-link text-center">Don't you have an account? <a href="{% url 'register' %}">Register</a></p>

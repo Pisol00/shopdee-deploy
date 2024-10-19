@@ -2,6 +2,7 @@ import json
 import os
 import random
 from django.conf import settings
+from django.urls import reverse
 from django.views import View
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import *
@@ -19,6 +20,7 @@ from django.conf import settings
 from django.db.models import Count
 from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError
+from django.core.files.storage import FileSystemStorage
 
 
 
@@ -69,9 +71,9 @@ def attach_collection_data(collections):
         collection.category_name = category_map.get(collection.category.id) if collection.category else 'Unknown'
 
 
+
 class HomePageView(View):
     def get(self, request):
-        # แสดงแบรนด์ทั้งหมด
         brands = Brand.objects.all()
         
         # แสดงคอลเลคชั่นล่าสุด 3 อันพร้อมราคาต่ำสุด
@@ -101,6 +103,107 @@ class HomePageView(View):
         return collections
 
 
+class ExploreView(View):
+    def get(self, request):
+        categories = Category.objects.all()
+        brands = Brand.objects.all()
+        price_ranges = request.GET.getlist('price_ranges')
+        selected_categories = request.GET.getlist('categories')
+        selected_brands = request.GET.getlist('brands')
+
+        # ค้นหา collections พร้อมกับราคาต่ำสุดของแต่ละ collection
+        collections = Collection.objects.prefetch_related('product_set').annotate(
+            min_price=Min('product__price')  # ดึงราคาต่ำสุดจาก Product
+        )
+
+        if price_ranges:
+            price_filter = Q()
+            for price_range in price_ranges:
+                if '-' in price_range:
+                    min_max = price_range.split('-')
+                    min_price = float(min_max[0]) if min_max[0] else 0  # ถ้าไม่มีค่า min ให้เป็น 0
+                    max_price = float(min_max[1]) if len(min_max) > 1 and min_max[1] else None  # ถ้าไม่มีค่า max ให้เป็น None
+
+                    if max_price is not None:
+                        price_filter |= Q(product__price__gte=min_price, product__price__lte=max_price)
+                    else:
+                        price_filter |= Q(product__price__gte=min_price)
+                else:
+                    min_price = float(price_range)
+                    price_filter |= Q(product__price__gte=min_price)
+            collections = collections.filter(price_filter)
+
+
+        if selected_categories:
+            collections = collections.filter(category__id__in=selected_categories)
+
+        if selected_brands:
+            collections = collections.filter(brand__id__in=selected_brands)
+
+        category_map = {category.id: category.name for category in categories}
+
+        for collection in collections:
+            collection.primary_image = collection.images.filter(is_primary=True).first()
+            collection.category_name = category_map.get(collection.category.id) if collection.category else 'Unknown'
+
+        context = {
+            'collections': collections,
+            'categories': categories,
+            'brands': brands,
+            'selected_categories': selected_categories,
+            'selected_brands': selected_brands,
+            'price_ranges': price_ranges,
+        }
+
+        return render(request, "explore.html", context)
+
+
+
+
+class CollectionDetailView(LoginRequiredMixin, View):
+    login_url = "/login/"
+    permission_required = 'shop.add_product'
+    
+    def get(self, request, collection_id):
+        # ดึงคอลเล็กชันหรือคืนค่า 404 ถ้าไม่พบ
+        collection = get_object_or_404(Collection, pk=collection_id)
+
+        # หาค่าราคาต่ำสุดและราคาผลิตภัณฑ์ใหม่
+        min_price = collection.product_set.aggregate(Min('price'))['price__min']
+        new_product_price = collection.product_set.filter(condition='brand_new').aggregate(Min('price'))['price__min']
+        
+        # ดึงราคาขายล่าสุด
+        last_sale = collection.product_set.filter(orders__isnull=False).order_by('-orders__date').first()
+        last_sale_price_value = last_sale.price if last_sale else None
+        
+        # ดึงภาพที่เกี่ยวข้องกับคอลเล็กชัน
+        images = CollectionImage.objects.filter(collection=collection)
+        primary_image = images.filter(is_primary=True).first()
+        
+        # ดึงรีวิวสำหรับคอลเล็กชัน
+        reviews_with_ratings = get_reviews_for_collection(collection)
+        
+        # ดึงคอลเล็กชันแบบสุ่มโดยไม่รวมคอลเล็กชันปัจจุบัน
+        random_collections = get_random_collections(collection)
+        
+        # ตั้งราคาตั้งต้นสำหรับคอลเล็กชันแบบสุ่ม
+        for random_collection in random_collections:
+            random_collection.starting_price = get_starting_price(random_collection)
+
+        # เตรียม context สำหรับการเรนเดอร์เทมเพลต
+        context = {
+            'collection': collection,
+            'min_price': min_price,
+            'new_product_price': new_product_price,
+            'last_sale_price': last_sale_price_value,
+            'images': images,
+            'primary_image': primary_image,
+            'reviews_with_ratings': reviews_with_ratings, 
+            'random_collections': random_collections,
+            'can_add_product': request.user.has_perm('shop.add_product')
+        }
+        
+        return render(request, './collections/collection.html', context)
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -129,12 +232,13 @@ class EditProfileView(LoginRequiredMixin, View):
         user = request.user
         form = EditProfileForm(request.POST, instance=user)
 
-        # ตรวจสอบความถูกต้องของข้อมูล
-        if self.validate_profile_data(form, request):
-            user = form.save()
+        if form.is_valid():
+            form.save()
             messages.success(request, "Profile updated successfully!")
             return redirect('profile')
-
+        else:
+            messages.error(request, "There was an error updating your profile.")
+        
         return render(request, 'profiles/profile/editprofile.html', {'form': form})
 
     def validate_profile_data(self, form, request):
@@ -232,10 +336,8 @@ class NewAddressView(LoginRequiredMixin, View):
 class EditAddressView(LoginRequiredMixin, View):
     login_url = "/login/"
 
-    def get(self, request, address_id):
-        user = request.user
-        address = Address.objects.get(pk=address_id, user=request.user)
-
+    def load_location_data(self):
+        """Load location data from JSON files."""
         province_file = os.path.join(settings.BASE_DIR, 'shop', 'data', 'thai_province.json')
         district_file = os.path.join(settings.BASE_DIR, 'shop', 'data', 'thai_district.json')
         subdistrict_file = os.path.join(settings.BASE_DIR, 'shop', 'data', 'thai_subdistrict.json')
@@ -247,6 +349,17 @@ class EditAddressView(LoginRequiredMixin, View):
         with open(subdistrict_file, encoding='utf-8') as f:
             subdistricts = json.load(f)
 
+        return provinces, districts, subdistricts
+
+    def get(self, request, address_id):
+        user = request.user
+        try:
+            address = Address.objects.get(pk=address_id, user=user)
+        except Address.DoesNotExist:
+            messages.error(request, "Address not found.")
+            return redirect('address')  # Redirect to address list if not found
+
+        provinces, districts, subdistricts = self.load_location_data()
         form = AddressForm(instance=address)
 
         context = {
@@ -260,7 +373,12 @@ class EditAddressView(LoginRequiredMixin, View):
         return render(request, "profiles/addresses/editaddress.html", context)
 
     def post(self, request, address_id):
-        address = Address.objects.get(pk=address_id, user=request.user)
+        try:
+            address = Address.objects.get(pk=address_id, user=request.user)
+        except Address.DoesNotExist:
+            messages.error(request, "Address not found.")
+            return redirect('address')
+
         form = AddressForm(request.POST, instance=address)
 
         if form.is_valid():
@@ -270,16 +388,7 @@ class EditAddressView(LoginRequiredMixin, View):
         else:
             messages.error(request, "There were errors in your submission.")
 
-        province_file = os.path.join(settings.BASE_DIR, 'shop', 'data', 'thai_province.json')
-        district_file = os.path.join(settings.BASE_DIR, 'shop', 'data', 'thai_district.json')
-        subdistrict_file = os.path.join(settings.BASE_DIR, 'shop', 'data', 'thai_subdistrict.json')
-
-        with open(province_file, encoding='utf-8') as f:
-            provinces = json.load(f)
-        with open(district_file, encoding='utf-8') as f:
-            districts = json.load(f)
-        with open(subdistrict_file, encoding='utf-8') as f:
-            subdistricts = json.load(f)
+        provinces, districts, subdistricts = self.load_location_data()
 
         context = {
             'first_name': request.user.first_name,
@@ -380,29 +489,27 @@ class ChangePasswordView(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def get(self, request):
-        return render(request, 'profiles/change_password.html')
+        form = ChangePasswordForm(user=request.user)  # ส่ง user ปัจจุบันเข้าไปในฟอร์ม
+        return render(request, 'profiles/change_password.html', {'form': form})
 
     def post(self, request):
-        old_password = request.POST.get('old_password')
-        new_password = request.POST.get('new_password')
-        confirm_password = request.POST.get('confirm_password')
+        form = ChangePasswordForm(user=request.user, data=request.POST)  # ส่ง user และข้อมูล POST เข้าไปในฟอร์ม
+        if form.is_valid():
+            user = request.user
+            new_password = form.cleaned_data.get('new_password')
 
-        user = request.user
+            # ตั้งค่ารหัสผ่านใหม่
+            user.set_password(new_password)
+            user.save()
 
-        if new_password != confirm_password:
-            messages.error(request, "New passwords do not match.")
+            # อัปเดต session auth hash เพื่อให้ผู้ใช้ไม่ต้องล็อกอินใหม่
+            update_session_auth_hash(request, user)
+
+            messages.success(request, "Your password was successfully updated!")
             return redirect('change_password')
-
-        if not user.check_password(old_password):
-            messages.error(request, "Old password is incorrect.")
-            return redirect('change_password')
-
-        user.set_password(new_password)
-        user.save()
-        update_session_auth_hash(request, user)
-
-        messages.success(request, "Your password was successfully updated!")
-        return redirect('change_password')
+        else:
+            messages.error(request, "There was an error updating your password.")
+            return render(request, 'profiles/change_password.html', {'form': form})
     
 
 
@@ -428,162 +535,90 @@ class GetSubdistrictsView(View):
 
         return JsonResponse({'subdistricts': filtered_subdistricts})
 
-class ExploreView(View):
-    def get(self, request):
-        categories = Category.objects.all()
-        brands = Brand.objects.all()
-        price_ranges = request.GET.getlist('price_ranges')
-        selected_categories = request.GET.getlist('categories')
-        selected_brands = request.GET.getlist('brands')
 
-        # ค้นหา collections พร้อมกับราคาต่ำสุดของแต่ละ collection
-        collections = Collection.objects.prefetch_related('product_set').annotate(
-            min_price=Min('product__price')  # ดึงราคาต่ำสุดจาก Product
-        )
-
-        if price_ranges:
-            price_filter = Q()
-            for price_range in price_ranges:
-                if '-' in price_range:
-                    min_max = price_range.split('-')
-                    min_price = float(min_max[0]) if min_max[0] else 0  # ถ้าไม่มีค่า min ให้เป็น 0
-                    max_price = float(min_max[1]) if len(min_max) > 1 and min_max[1] else None  # ถ้าไม่มีค่า max ให้เป็น None
-
-                    if max_price is not None:
-                        price_filter |= Q(product__price__gte=min_price, product__price__lte=max_price)
-                    else:
-                        price_filter |= Q(product__price__gte=min_price)
-                else:
-                    min_price = float(price_range)
-                    price_filter |= Q(product__price__gte=min_price)
-            collections = collections.filter(price_filter)
-
-
-        if selected_categories:
-            collections = collections.filter(category__id__in=selected_categories)
-
-        if selected_brands:
-            collections = collections.filter(brand__id__in=selected_brands)
-
-        category_map = {category.id: category.name for category in categories}
-
-        for collection in collections:
-            collection.primary_image = collection.images.filter(is_primary=True).first()
-            collection.category_name = category_map.get(collection.category.id) if collection.category else 'Unknown'
-
-        context = {
-            'collections': collections,
-            'categories': categories,
-            'brands': brands,
-            'selected_categories': selected_categories,
-            'selected_brands': selected_brands,
-            'price_ranges': price_ranges,
-        }
-
-        return render(request, "explore.html", context)
     
-class CollectionDetailView(View, LoginRequiredMixin):
-    permission_required = 'shop.add_product'
-    
-    def get(self, request, collection_id):
-        # ใช้ get_object_or_404 เพื่อจัดการกรณีที่ไม่พบคอลเล็กชัน
-        collection = get_object_or_404(Collection, pk=collection_id)
 
-        # หาค่าราคาอย่างน้อย
-        min_price = collection.product_set.aggregate(Min('price'))['price__min']
-        new_product_price = collection.product_set.filter(condition='brand_new').aggregate(Min('price'))['price__min']
-        
-        # ดึงราคาขายล่าสุด
-        last_sale = collection.product_set.filter(orders__isnull=False).order_by('-orders__date').first()
-
-        if last_sale:
-            last_sale_price_value = last_sale.price  # ใช้ last_sale แทน last_sale_price
-        else:
-            last_sale_price_value = None
-        
-        # ดึงภาพในคอลเล็กชัน
-        images = CollectionImage.objects.filter(collection=collection)
-        primary_image = images.filter(is_primary=True).first()
-        
-        # ดึงข้อมูลรีวิวของผลิตภัณฑ์ในคอลเล็กชันนี้
-        reviews_with_ratings = get_reviews_for_collection(collection)
-        
-         # ดึงคอลเล็กชันอื่น ๆ โดยไม่รวมคอลเล็กชันที่กำลังแสดงอยู่
-        random_collections = get_random_collections(collection)
-        
-        # ดึงราคาต่ำสุดของแต่ละคอลเลคชั่นที่มาจากการสุ่ม
-        for random_collection in random_collections:
-            random_collection.starting_price = get_starting_price(random_collection)
-        
-
-        context = {
-            'collection': collection,
-            'min_price': min_price,
-            'new_product_price': new_product_price,
-            'last_sale_price': last_sale_price_value,
-            'images': images,
-            'primary_image': primary_image,
-            'reviews_with_ratings': reviews_with_ratings, 
-            'random_collections': random_collections,
-            'can_add_product': request.user.has_perm('shop.add_product')
-        }
-        return render(request, './collections/collection.html', context) 
 
 class ProductSelectSizeView(View):
-    def get(self, request, collection_id):
-        collection = Collection.objects.get(pk=collection_id)
-        category = collection.category
-        size = request.GET.get('size', None)
-        
-        action = request.GET.get('action', 'buy') 
+    def get_size_options(self, category_name, collection):
+        """Returns sorted size options based on the product category and availability, excluding products with orders."""
+        if category_name == "Apparel":
+            size_options = Product.objects.filter(
+                collection=collection
+            ).annotate(
+                num_orders=Count('orders')
+            ).filter(
+                num_orders=0
+            ).values_list(
+                'size_clothing', flat=True
+            ).distinct().exclude(size_clothing=None)
 
-        if category.name == "Apparel":
-            # กรองค่าที่เป็น None ออก
-            size_options = Product.objects.filter(collection=collection).values_list('size_clothing', flat=True).distinct().exclude(size_clothing=None)
             size_order = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "FREE SIZE"]
         
-        elif category.name == "Shoes":
-            # กรองค่าที่เป็น None ออก
-            size_options = Product.objects.filter(collection=collection).values_list('size_shoes', flat=True).distinct().exclude(size_shoes=None)
+        elif category_name == "Shoes":
+            size_options = Product.objects.filter(
+                collection=collection
+            ).annotate(
+                num_orders=Count('orders')
+            ).filter(
+                num_orders=0
+            ).values_list(
+                'size_shoes', flat=True
+            ).distinct().exclude(size_shoes=None)
+
             size_order = ["US4", "US4.5", "US5", "US5.5", "US6", "US6.5", "US7", "US7.5", "US8", "US8.5", 
                           "US9", "US9.5", "US10", "US10.5", "US11", "US11.5", "US12", "US12.5", 
                           "US13", "US13.5", "US14", "US14.5", "US15", "US15.5", "US16", 
                           "US16.5", "US17", "US17.5", "US18"]
         else:
             size_options = []
-            
-        
-        print(size)
-        # ดึงข้อมูลผลิตภัณฑ์ที่มี condition = 'brand_new' และไม่มีการสั่งซื้อ โดยใช้ size ที่เลือก
-        brand_new_product = Product.objects.filter(collection=collection, condition='brand_new', size_shoes = size).annotate(num_orders=Count('orders')).filter(num_orders=0).first()
-        print(brand_new_product)
-        
-        # จัดเรียง size_options
-        sorted_size_options = sorted(size_options, key=lambda size: size_order.index(size) if size in size_order else len(size_order))
-        
-        # ดึงข้อมูลรีวิวของผลิตภัณฑ์ในคอลเล็กชันนี้
+            size_order = []
+
+        return sorted(size_options, key=lambda size: size_order.index(size) if size in size_order else len(size_order))
+
+    def get(self, request, collection_id):
+        collection = Collection.objects.get(pk=collection_id)
+        category_name = collection.category.name
+        action = request.GET.get('action', 'buy')
+
+        # Fetch and sort size options
+        sorted_size_options = self.get_size_options(category_name, collection)
+
+        # Fetch only available products that have no orders
+        available_products = Product.objects.filter(
+            collection=collection
+        ).annotate(
+            num_orders=Count('orders')
+        ).filter(
+            num_orders=0
+        )
+
+        # Check if there are brand new or used products available
+        has_brand_new = available_products.filter(condition='brand_new').exists()
+        has_used = available_products.filter(condition='used').exists()
+
+        # Fetch reviews and random collections
         reviews_with_ratings = get_reviews_for_collection(collection)
-        
-        # สุ่มคอลเล็กชันอื่น ๆ โดยไม่รวมคอลเล็กชันที่กำลังแสดงอยู่
         random_collections = get_random_collections(collection)
-        
+
         for random_collection in random_collections:
             random_collection.starting_price = get_starting_price(random_collection)
-        
+
+        # Build the context for the template
         context = {
             'collection': collection,
             'images': collection.images.all(),
             'size_options': sorted_size_options,
-            'category': category,
+            'category': collection.category,
             'action': action,
+            'has_brand_new': has_brand_new,
+            'has_used': has_used,
             'reviews_with_ratings': reviews_with_ratings,
             'random_collections': random_collections,
-            'brand_new_product': brand_new_product
         }
-        
+
         return render(request, "./products/product_size.html", context)
-    
-    
+
 
 
 
@@ -599,25 +634,12 @@ class ShowProductByConditionView(LoginRequiredMixin, View):
         # ดึง Collection หรือส่งกลับ 404 ถ้าไม่พบ
         collection = get_object_or_404(Collection, pk=collection_id)
 
-        # ตรวจสอบ category ที่ถูกส่งมา
-        if category == 'Shoes':
-            product_queryset = collection.product_set.filter(
-                condition=condition_select,  # ใช้ condition_select ที่ได้มา
-                size_shoes=size
-            ).annotate(num_orders=Count('orders')).filter(num_orders=0)
-        elif category == 'Clothing':
-            product_queryset = collection.product_set.filter(
-                condition=condition_select,  # ใช้ condition_select ที่ได้มา
-                size_clothing=size
-            ).annotate(num_orders=Count('orders')).filter(num_orders=0)
-        else:
-            product_queryset = []
+        # กำหนด queryset ของผลิตภัณฑ์
+        product_queryset = self.get_products(collection, category, condition_select, size)
 
         # เพิ่ม primary_image ให้กับสินค้าทั้งหมดใน product_queryset
         for product in product_queryset:
-            product_image = UsedProductImage.objects.filter(product=product).first()  # ดึงรูปภาพแรก
-            product.image_url = product_image.image_url if product_image else None  # ใช้ image_url หรือ None ถ้าไม่มีรูปภาพ
-
+            product.image_url = self.get_first_image_url(product)
 
         addresses = Address.objects.filter(user=request.user)  # เปลี่ยนเป็นผู้ใช้ปัจจุบัน
         reviews_with_ratings = get_reviews_for_collection(collection)
@@ -638,14 +660,23 @@ class ShowProductByConditionView(LoginRequiredMixin, View):
 
         return render(request, "./products/buy/show-by-condition.html", context)
 
+    def get_products(self, collection, category, condition_select, size):
+        if category == 'Shoes' or category == 'Clothing':
+            return collection.product_set.filter(
+                condition=condition_select,
+                size_shoes=size
+            ).annotate(num_orders=Count('orders')).filter(num_orders=0)  # ตรวจสอบจำนวนคำสั่งซื้อ
+        else:
+            return collection.product_set.filter(
+                condition=condition_select
+            ).annotate(num_orders=Count('orders')).filter(num_orders=0)
+
+    def get_first_image_url(self, product):
+        product_image = UsedProductImage.objects.filter(product=product).first()  # ดึงรูปภาพแรก
+        return product_image.image.url if product_image else None  # ใช้ image.url เพื่อเข้าถึง URL ของภาพ
 
 
-from django.contrib import messages
-from django.shortcuts import redirect, render
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Collection, Product, Address, Order, Payment
-
+#หน้า checkout product แบบเดี่ยว และ หลายรายการ
 class ProductCheckoutView(LoginRequiredMixin, View):
     login_url = "/login/"
 
@@ -659,67 +690,140 @@ class ProductCheckoutView(LoginRequiredMixin, View):
         collection = Collection.objects.get(pk=collection_id)
 
         # ค้นหา Product ตาม product_id และ condition
-        product = collection.product_set.filter(id=product_id, condition=condition).first()
+        product = collection.product_set.get(id=product_id, condition=condition)
 
         # ค้นหา addresses ของผู้ใช้ปัจจุบัน
         addresses = Address.objects.filter(user=request.user)
 
+        # ค้นหารูปภาพของสินค้า
+        product_images = UsedProductImage.objects.filter(product=product)
+        print(product_images)
+        
         context = {
             'collection': collection,
             'product': product,
             'size': size,
             'addresses': addresses,
-            'shipping_fee': 50,
-            'images': collection.images.all(),
+            'shipping_fee': 150,
+            'collection_images': collection.images.all(),  # รูปภาพจาก Collection
+            'product_images': product_images,  # รูปภาพจาก Product
         }
 
         return render(request, './products/buy/checkout.html', context)
 
     def post(self, request):
         product_id = request.POST.get('product_id')  # เปลี่ยนให้ดึงจาก POST แทน GET
-        product = Product.objects.get(id=product_id)
         collection_id = request.POST.get('collection_id')
         shipping_address_id = request.POST.get('shipping_address')
         payment_method = request.POST.get('payment_method')
 
+        # ค้นหา Product และ Collection
+        product = Product.objects.get(id=product_id)
         collection = Collection.objects.get(pk=collection_id)
 
         if not shipping_address_id:
             messages.error(request, "Please select a shipping address.")
             return redirect(request.path)
 
-        size = request.POST.get('size')  
-        category_name = collection.category.name
+        try:
+            # เริ่ม transaction
+            with transaction.atomic():
+                # สร้าง Order
+                order = Order.objects.create(
+                    user=request.user,
+                    product=product,
+                    shipping_address_id=shipping_address_id,
+                    price=product.price,
+                    quantity=1  # ตั้งค่าเป็น 1 เนื่องจากไม่ให้เลือกจำนวน
+                )
 
-        # การตรวจสอบหมวดหมู่ยังคงอยู่ที่นี่หากจำเป็น
-        # if category_name == 'Apparel':
-        #     product = Product.objects.filter(collection_id=collection_id, size_clothing=size).first()
-        # elif category_name == 'Shoes':
-        #     product = Product.objects.filter(collection_id=collection_id, size_shoes=size).first()
-        # else:
-        #     messages.error(request, "Invalid category.")
-        #     return redirect(request.path)
+                # สร้าง Payment
+                payment = Payment.objects.create(
+                    user=request.user,
+                    order=order,
+                    payment_method=payment_method,
+                    amount=product.price,
+                    status='completed'
+                )
+                
+            # เปลี่ยนไปยังหน้า Success หรือหน้าหลังจากชำระเงิน
+            return redirect('payment_success', payment_id=payment.id)
 
-        order = Order.objects.create(
-            user=request.user,
-            product=product,
-            shipping_address_id=shipping_address_id,
-            price=product.price,
-            quantity=1  # ตั้งค่าเป็น 1 เนื่องจากไม่ให้เลือกจำนวน
-        )
+        except Exception as e:
+            messages.error(request, "There was an error processing your order: {}".format(str(e)))
+            return redirect(request.path)
 
-        payment = Payment.objects.create(
-            user=request.user,
-            order=order,
-            payment_method=payment_method,
-            amount=product.price,  # ไม่ต้องคูณด้วย quantity เนื่องจาก quantity เป็น 1
-            status='completed'
-        )
+class CheckoutCartView(LoginRequiredMixin, View):
+    def get(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+        if cart:
+            items = cart.items.all()
+            total_price = sum(item.product.price * item.quantity for item in items)
+        else:
+            items = []
+            total_price = 0
 
-        messages.success(request, "Payment successful! Thank you for your purchase.")
-        return redirect('payment_success', payment_id=payment.id)  # เปลี่ยนไปยังหน้า Success หรือหน้าหลังจากชำระเงิน
+        addresses = Address.objects.filter(user=request.user)
 
+        context = {
+            'cart_items': items,
+            'total_price': total_price,
+            'addresses': addresses,
+            'shipping_fee': 150,
+        }
+        return render(request, './products/buy/checkout_cart.html', context)
 
+    def post(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+        shipping_fee = 150
+        
+        if not cart or not cart.items.exists():
+            messages.error(request, "Your cart is empty.")
+            return redirect(request.path)
+
+        shipping_address_id = request.POST.get('address_id')
+        payment_method = request.POST.get('payment_method')
+
+        if not shipping_address_id:
+            messages.error(request, "Please select a shipping address.")
+            return redirect(request.path)
+
+        if not payment_method:
+            messages.error(request, "Please select a payment method.")
+            return redirect(request.path)
+
+        # สร้างคำสั่งซื้อและการชำระเงินสำหรับแต่ละรายการในตะกร้า
+        try:
+            with transaction.atomic():  # ใช้ transaction เพื่อป้องกันข้อผิดพลาด
+                for item in cart.items.all():
+                    # สร้างคำสั่งซื้อ
+                    order = Order.objects.create(
+                        user=request.user,
+                        product=item.product,
+                        shipping_address_id=shipping_address_id,
+                        price=item.product.price,
+                        quantity=item.quantity
+                    )
+
+                    # สร้างการชำระเงิน
+                    payment = Payment.objects.create(
+                        user=request.user,
+                        order=order,
+                        payment_method=payment_method,
+                        amount=item.product.price * item.quantity + shipping_fee,
+                        status='completed'
+                    )
+
+                # ล้างตะกร้าหลังจากทำการชำระเงินเรียบร้อย
+                cart.items.all().delete()
+
+            messages.success(request, "Payment successful!")
+            return redirect('payment_success', payment_id=payment.id)
+
+        except Exception as e:
+            messages.error(request, f"An error occurred while processing your payment: {str(e)}")
+            return redirect(request.path)
+        
 
 class PaymentSuccessView(LoginRequiredMixin,View):
     login_url = "/login/"
@@ -736,7 +840,8 @@ class ProductBidView(View):
     def get(self, request):
         return render(request, "product_bid.html")
     
-class SellDetailView(View,LoginRequiredMixin, PermissionRequiredMixin):
+class SellDetailView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/login/"
     permission_required = 'shop.add_product'
     def get(self, request):
         collection_id = request.GET.get('collection_id')
@@ -789,7 +894,9 @@ class SellDetailView(View,LoginRequiredMixin, PermissionRequiredMixin):
                 'collection': collection  # หรือข้อมูลที่คุณต้องการแสดง
             })
             
-class SellSummaryView(LoginRequiredMixin, View):
+class SellSummaryView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/login/"
+    permission_required = 'shop.add_product'
     def get(self, request):
         # ดึงข้อมูลการขายจาก session
         sell_data = request.session.get('sell_data', {})
@@ -811,7 +918,7 @@ class SellSummaryView(LoginRequiredMixin, View):
             'transaction_fee': transaction_fee,
             'processing_fee': processing_fee,
             'total_payout': total_payout,
-            'image_urls': sell_data.get('images', [])
+            'images': collection.images.all()
         }
         
         return render(request, './products/sell/sell_summary.html', context)
@@ -835,7 +942,9 @@ class SellSummaryView(LoginRequiredMixin, View):
         collection = get_object_or_404(Collection, id=collection_id)
         size_clothing, size_shoes = self._get_sizes(collection, size)
 
-        image_urls = self._upload_images(sell_data.get('images', []))
+        # รับภาพที่อัปโหลด
+        uploaded_images = request.FILES.getlist('images')  # ดึงไฟล์ที่อัปโหลดทั้งหมด
+        print(f'Uploaded images: {uploaded_images}')
 
         # เริ่มต้นการทำธุรกรรม
         try:
@@ -843,18 +952,23 @@ class SellSummaryView(LoginRequiredMixin, View):
                 product = self._create_product(collection, size_clothing, size_shoes, price, has_defect, equipment)
 
                 # บันทึกรูปภาพที่อัปโหลด
-                for image_url in image_urls:
-                    UsedProductImage.objects.create(product=product, image_url=image_url)
+                for image in uploaded_images:
+                    if not image.content_type.startswith('image/'):
+                        return self._render_summary_with_error(collection_id, sell_data, "ไฟล์ที่อัปโหลดต้องเป็นภาพ.")
+                    
+                    UsedProductImage.objects.create(product=product, image=image)  # ใช้ฟิลด์ image
 
                 # สร้าง instance ของ Sale
                 Sale.objects.create(user=request.user, product=product, price=price)
+                
+                messages.success(request, "Successfully listed the product for sale!")
             
             return redirect('homepage')
 
         except Exception as e:
-            # จัดการข้อผิดพลาดที่เกิดขึ้นในระหว่างการทำธุรกรรม
+            print(f'Error occurred: {e}')
             return self._render_summary_with_error(collection_id, sell_data, "เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + str(e))
-
+    
     def _get_sizes(self, collection, size):
         """กำหนดขนาดตามประเภทของคอลเลกชัน."""
         if collection.category.name == 'Apparel':
@@ -864,12 +978,21 @@ class SellSummaryView(LoginRequiredMixin, View):
         return None, None
 
     def _upload_images(self, images):
-        """อัปโหลดภาพไปยัง S3 และส่งกลับ URL ของภาพ."""
+        """อัปโหลดภาพไปยัง Local Storage และส่งกลับ URL ของภาพ."""
         image_urls = []
+        
         for image in images:
-            object_name = f'temporary/{image.name}'
-            self.upload_to_s3(image, settings.AWS_STORAGE_BUCKET_NAME, object_name)
-            image_urls.append(f'https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{object_name}')
+            # สร้างชื่อไฟล์ใหม่หรือใช้ชื่อเดิม
+            file_path = f'uploads/{image.name}'  # กำหนดพาธที่ต้องการเก็บไฟล์
+            
+            # บันทึกไฟล์ลงใน Local Storage
+            with open(os.path.join(settings.MEDIA_ROOT, file_path), 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+
+            # เพิ่ม URL ของภาพที่จัดเก็บใน Local Storage ลงในลิสต์
+            image_urls.append(f'{settings.MEDIA_URL}{file_path}')
+
         return image_urls
 
     def _create_product(self, collection, size_clothing, size_shoes, price, has_defect, equipment):
@@ -1016,3 +1139,74 @@ class SellingDetailView(LoginRequiredMixin, View):
         }
 
         return render(request, 'profiles/selling-detail.html', context)
+    
+
+class CartView(LoginRequiredMixin, View):
+    """แสดงสินค้าที่อยู่ในตะกร้า"""
+    
+    def get(self, request):
+        cart = get_object_or_404(Cart, user=request.user)  # รับตะกร้าของผู้ใช้
+        cart_items = cart.items.all()  # ดึงรายการสินค้าจากตะกร้า
+        
+        # คำนวณจำนวนรวมของสินค้าในตะกร้า
+        total_quantity = sum(item.quantity for item in cart_items)  
+        
+        # คำนวณจำนวนเงินรวมทั้งหมด
+        total_amount = sum(item.product.price * item.quantity for item in cart_items)
+
+        # สร้าง context สำหรับส่งข้อมูลไปยัง template
+        context = {
+            'cart_items': cart_items,
+            'total_quantity': total_quantity,
+            'total_amount': total_amount,  # เพิ่มจำนวนเงินรวมเข้าไปใน context
+        }
+        
+        return render(request, 'cart.html', context)  # แสดงผลหน้าตะกร้า
+
+class AddToCartView(LoginRequiredMixin, View):
+    """เพิ่มสินค้าในตะกร้า"""
+    
+    def post(self, request, product_id):
+        # รับหรือสร้างตะกร้าสินค้าสำหรับผู้ใช้
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        
+        # ค้นหาสินค้าโดยใช้ product_id
+        product = get_object_or_404(Product, id=product_id)
+        
+        # รับหรือสร้างรายการในตะกร้า
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        
+        # เพิ่มจำนวนถ้าสินค้าอยู่ในตะกร้าแล้ว
+        if not created:
+            cart_item.quantity = 1 
+        
+        # บันทึกการเปลี่ยนแปลง
+        cart_item.save()
+
+        # ส่งคืนการเปลี่ยนเส้นทางไปยังหน้าตะกร้า
+        return redirect('cart')  # ส่งคืนวัตถุ HttpResponse
+
+class RemoveFromCartView(LoginRequiredMixin, View):
+    """Remove an item from the cart."""
+
+    def post(self, request, item_id):
+        cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+        cart_item.delete()  # Remove the item from the cart
+
+        return redirect('cart')  # Redirect back to the cart page
+
+class ClearCartView(LoginRequiredMixin, View):
+    """Clear all items from the cart."""
+
+    def post(self, request):
+        # รับตะกร้าของผู้ใช้
+        cart = Cart.objects.filter(user=request.user).first()
+
+        if cart:
+            # ลบรายการในตะกร้า
+            cart.items.all().delete()
+
+        # Redirect ไปยังหน้าอื่น (เช่น หน้าแสดงตะกร้าหรือหน้าแรก)
+        return redirect('cart')  # เปลี่ยน 'cart_view' เป็น URL name ที่ต้องการ
+    
+

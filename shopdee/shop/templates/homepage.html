@@ -27,7 +27,7 @@
   <div class="band-container">
     <!-- ดึงข้อมูลจากตารางแบรนด์มาแสดงผล -->
     <div class="brand-logo">
-      {% for brand in brands %}
+      {% for brand in brands|slice:":11" %}
       <a href="#">
         <img src="{{ brand.img_url }}" alt="{{ brand.name }}" />
       </a>

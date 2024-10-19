@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,15 +78,14 @@ WSGI_APPLICATION = 'shopdee.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'shopdee_db'),
-        'USER': os.environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', '1234'),
-        'HOST': os.environ.get('DATABASE_HOST', 'db'),  # ใช้ชื่อ service ใน docker-compose
-        'PORT': os.environ.get('DATABASE_PORT', '5432'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "shopdee_db",
+        "USER": "postgres",
+        "PASSWORD": "1234",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
@@ -136,22 +134,21 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+import os
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 
 TEMPLATE_DIRS = (
     os.path.join(SETTINGS_PATH, 'templates'),
 )
 
-# import os
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# AWS_ACCESS_KEY_ID = 'AKIA5CBGTTK7Z3HIHQ6W'
-# AWS_SECRET_ACCESS_KEY = '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'
-# AWS_STORAGE_BUCKET_NAME = 'shopdee-image'
-# AWS_S3_REGION_NAME = 'ap-southeast-2'
-# AWS_S3_SIGNATURE_VERSION = 's3v4'
-# AWS_S3_FILE_OVERWRITE = False
-# AWS_DEFAULT_ACL = None
-# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = 'AKIA6D6JBTWMNPMD4SBU'
+AWS_SECRET_ACCESS_KEY = 'OPVQp+nkIAzpsy8eMKhuAq2R4EhVToab8PBkSYz8+FdbbqS'
+AWS_STORAGE_BUCKET_NAME = 'shopdee-image'
+AWS_S3_REGION_NAME = 'ap-southeast-2'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'

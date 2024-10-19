@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="container mt-5 mb-5">
+
+    {% if cart_items %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-4">
+                <h4 class="card-title">Shopping Cart</h4>
+                <form action="{% url 'clear_cart' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-clear">Clear All</button>
+                </form>
+            </div>
+
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Collection Name</th>
+                        <th>Size</th>
+                        <th>Condition</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.product.collection.name }}</td>
+                        <td>
+                            {% if item.product.size_clothing %}
+                                {{ item.product.size_clothing }}
+                            {% elif item.product.size_shoes %}
+                                {{ item.product.size_shoes }}
+                            {% else %}
+                                One Size
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.product.condition == 'brand_new' %}
+                                <span>Brand New</span>
+                            {% elif item.product.condition == 'used' %}
+                                <span>Used</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.product.price|floatformat:2 }}</td>
+                        <td>
+                            <form action="{% url 'remove_from_cart' item.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm" title="Remove">
+                                    <i class="fas fa-trash-alt"></i> <!-- ไอคอนถังขยะ -->
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="mt-4">
+                <div class="d-flex flex-column">
+                    <h6 class="mb-2">Total Quantity: {{ total_quantity }} items</h6>
+                    <h6>Total Amount: ${{ total_amount|floatformat:2 }}</h6>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex">
+                <a href="{% url 'checkout_cart' %}" class="btn btn-primary">Check Out</a>
+                <a href="{% url 'explore' %}" class="btn btn-dark ms-3">Back to Shop</a>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="alert alert-dark" role="alert">
+        Your cart is empty.
+    </div>
+    <a href="{% url 'explore' %}" class="btn btn-dark">Back to Shop</a>
+    {% endif %}
+</div>
+{% endblock %}

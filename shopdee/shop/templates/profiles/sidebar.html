@@ -1,11 +1,58 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    .profile-picture {
+        width: 100px;
+        height: 100px;
+        object-fit: cover; /* ทำให้รูปภาพถูกตัดให้พอดีกับขนาด */
+        border: 2px solid #f0f0f0; /* เพิ่มกรอบให้ดูดีขึ้น */
+        border-radius: 50%; /* ทำให้รูปภาพเป็นวงกลม */
+        /* ลบเงาออก */
+    }
+
+    .camera-icon {
+        position: absolute;
+        bottom: 5px; /* ปรับระยะห่างจากด้านล่าง */
+        right: 70px; /* ปรับระยะห่างจากด้านขวา */
+        background: white; /* สีพื้นหลัง */
+        border-radius: 50%; /* ทำให้เป็นวงกลม */
+        border: solid 1px #f0f0f0; /* กรอบของไอคอน */
+        padding: 10px; /* เพิ่มระยะขอบให้ไอคอน */
+        transition: background 0.3s; /* เพิ่มการเปลี่ยนแปลงให้สวยงาม */
+    }
+
+    .camera-icon:hover {
+        background: #f0f0f0; /* เปลี่ยนสีพื้นหลังเมื่อวางเมาส์ */
+        cursor: pointer;
+    }
+
+    .camera-icon i {
+        color: #333; /* เปลี่ยนสีไอคอนให้เด่น */
+        font-size: 12   px; /* ขนาดของไอคอน */
+    }
+
+    .card {
+        padding: 20px; /* เพิ่มระยะขอบให้การ์ด */
+        border: 1px solid #ddd; /* กรอบของการ์ด */
+        border-radius: 8px; /* มุมของการ์ด */
+        background-color: #fff; /* พื้นหลังของการ์ด */
+    }
+
+</style>
+
 <div class="card text-center p-3">
-    <img src="https://via.placeholder.com/100" alt="Profile Picture" class="rounded-circle mx-auto">
+    <div class="position-relative">
+        <img src="{{ user.profile.profile_picture.url|default:'https://cloud-atg.moph.go.th/quality/sites/default/files/default_images/default.png' }}" alt="Profile Picture" class="rounded-circle mx-auto profile-picture">
+        <label for="file-upload" class="camera-icon">
+            <i class="fas fa-camera"></i>
+        </label>
+        <input id="file-upload" type="file" accept="image/*" onchange="uploadProfilePicture(this)" style="display: none;">
+    </div>
     <h5 class="mt-3">{{ user.first_name }} {{ user.last_name }}</h5>
     <hr>
     <ul class="list-unstyled ps-0 text-start">
         <li><a href="{% url 'profile' %}" class="d-block py-2 fw-semibold sidebar-link {% if request.path == request.build_absolute_uri %}active{% endif %}">Account</a></li>
         <li><a href="{% url 'address' %}" class="d-block py-2 fw-semibold sidebar-link {% if request.path == request.build_absolute_uri %}active{% endif %}">Address</a></li>
-        <li> <a href="{% url 'buying' %}?status=Pending" class="d-block py-2 fw-semibold sidebar-link {% if request.path == request.build_absolute_uri %}active{% endif %}">Buying</a></li>
+        <li><a href="{% url 'buying' %}?status=Pending" class="d-block py-2 fw-semibold sidebar-link {% if request.path == request.build_absolute_uri %}active{% endif %}">Buying</a></li>
         <li><a href="{% url 'selling' %}?status=Active%20Ask" class="d-block py-2 fw-semibold sidebar-link {% if request.path == request.build_absolute_uri %}active{% endif %}">Selling</a></li>
         <li><a href="{% url 'wishlist' %}" class="d-block py-2 fw-semibold sidebar-link {% if request.path == request.build_absolute_uri %}active{% endif %}">Wishlist</a></li>
         <li><a href="{% url 'change_password' %}" class="d-block py-2 fw-semibold sidebar-link {% if request.path == request.build_absolute_uri %}active{% endif %}">Change Password</a></li>
