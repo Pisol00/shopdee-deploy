@@ -137,10 +137,6 @@ class ProductReview(models.Model):
     comment = models.TextField()
     review_date = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        model = ProductReview
-        fields = ['rating', 'comment']
-
     def __str__(self):
         return f'Review for {self.product.collection.name} by {self.user.username}'
 
