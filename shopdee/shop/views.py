@@ -246,27 +246,6 @@ class EditProfileView(LoginRequiredMixin, View):
             messages.error(request, "There was an error updating your profile.")
         
         return render(request, 'profiles/profile/editprofile.html', {'form': form})
-
-    def validate_profile_data(self, form, request):
-        """ฟังก์ชันตรวจสอบความถูกต้องของข้อมูลโปรไฟล์"""
-        first_name = form.data.get('first_name')
-        last_name = form.data.get('last_name')
-        email = form.data.get('email')
-
-        # ตรวจสอบว่าทุกฟิลด์ต้องไม่ว่างเปล่า
-        if not first_name or not last_name or not email:
-            messages.error(request, "All fields are required.")
-            return False
-
-        # ตรวจสอบรูปแบบอีเมล
-        try:
-            validate_email(email)
-        except ValidationError:
-            messages.error(request, "Invalid email format. Please provide a valid email address.")
-            return False
-
-        # ตรวจสอบความถูกต้องของฟอร์ม
-        return form.is_valid()
     
 
 class AddressView(LoginRequiredMixin, View):
