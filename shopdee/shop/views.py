@@ -56,8 +56,15 @@ def get_random_collections(current_collection):
 
 
 def get_starting_price(collection):
-    """ฟังก์ชันคำนวณราคาต่ำสุดของคอลเล็กชัน"""
-    return Product.objects.filter(collection=collection).aggregate(Min('price'))['price__min']
+    """ฟังก์ชันคำนวณราคาต่ำสุดของคอลเล็กชัน หากไม่มีราคาคืนค่า N/A"""
+    result = Product.objects.filter(collection=collection).aggregate(Min('price'))
+    starting_price = result.get('price__min')
+    
+    # ถ้าราคาเป็น None ให้คืนค่า "N/A"
+    if starting_price is None:
+        return "N/A"
+    
+    return starting_price
 
 
 def attach_collection_data(collections):
@@ -77,7 +84,7 @@ class HomePageView(View):
         brands = Brand.objects.all()
         
         # แสดงคอลเลคชั่นล่าสุด 3 อันพร้อมราคาต่ำสุด
-        recent_collections = self.get_recent_collections_with_prices(3)
+        ent_collections = self.get_ent_collections_with_prices(3)
         
         # คำนวณจำนวนคำสั่งซื้อในแต่ละคอลเล็กชัน
         most_popular_collections = self.get_most_popular_collections(3)
@@ -85,12 +92,12 @@ class HomePageView(View):
         # เตรียมข้อมูลสำหรับ rendering
         context = {
             'brands': brands,
-            'collections': recent_collections,
+            'collections': ent_collections,
             'most_popular_collections': most_popular_collections,
         }
         return render(request, "homepage.html", context)
 
-    def get_recent_collections_with_prices(self, limit):
+    def get_ent_collections_with_prices(self, limit):
         """ดึงคอลเล็กชันล่าสุดพร้อมราคาต่ำสุด"""
         collections = Collection.objects.all().order_by('-created_at')[:limit]
         attach_collection_data(collections)
