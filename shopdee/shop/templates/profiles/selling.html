@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load humanize %}
 {% block title %}Selling{% endblock %}
 
 {% block style %}
@@ -65,7 +65,7 @@
                             <td>{{ sale.product.collection.name }}</td>
                             <td class="text-nowrap">{{ sale.date|date:"F j, Y" }}</td> <!-- ใช้ text-nowrap -->
                             <td class="text-nowrap">{{ sale.status }}</td> <!-- ใช้ text-nowrap -->
-                            <td class="text-nowrap">฿ {{ sale.price }}</td> <!-- ใช้ text-nowrap -->
+                            <td class="text-nowrap">฿ {{ sale.price|intcomma }}</td> <!-- ใช้ text-nowrap -->
                         </tr>
                         {% empty %}
                         <tr>
@@ -83,9 +83,6 @@
                             <option value="20">20</option>
                             <option value="30">30</option>
                         </select>
-                    </div>
-                    <div>
-                        0-0 of 0
                     </div>
                 </div>
             </div>
