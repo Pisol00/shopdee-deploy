@@ -6,12 +6,6 @@
 {% block style %}
 <link rel="stylesheet" href="{% static 'style-sheet/sell-detail.css' %}" />
 <script src="{% static 'js/sell_detail.js' %}"></script>
-<style>
-  .error-message {
-    color: red;
-    display: none; /* Initially hidden */
-  }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -21,7 +15,7 @@
   <div class="product-info">
     <h1>{{ collection.name }}</h1>
     <p class="product-code">{{ collection.brand.name }} | {{ collection.id }}</p>
-    <form id="sell-form" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
       <div class="product-detail">
@@ -71,7 +65,6 @@
           <option value="One Size">One Size</option>
           {% endif %}
         </select>
-        <p class="error-message" id="size-error">Please select a size.</p>
       </div>
 
       <div class="product-detail">
@@ -83,7 +76,6 @@
           <label class="radio-option">
             <input type="radio" name="has_defect" value="False" checked /> No
           </label>
-          <p class="error-message" id="defect-error">Please indicate if there is a defect.</p>
         </div>
       </div>
 
@@ -107,7 +99,6 @@
           {% else %}
           <p>No equipment options available for this category.</p>
           {% endif %}
-          <p class="error-message" id="equipment-error">Please select equipment.</p>
         </div>
       </div>
 
@@ -115,9 +106,9 @@
         <h3 class="detail-header fw-semibold">Price</h3>
         <div class="price-input">
           <input type="text" name="price" placeholder="Add Price" required />
-          <p class="error-message" id="price-error">Please enter a price.</p>
         </div>
       </div>
+
 
       <div class="preview-images" id="preview-images"></div>
 
@@ -131,47 +122,4 @@
     {% endif %}
   </div>
 </div>
-
-<script>
-  function validateForm() {
-    let isValid = true;
-
-    // Clear previous error messages
-    document.querySelectorAll('.error-message').forEach(error => {
-      error.style.display = 'none';
-    });
-
-    // Validate Size
-    const size = document.querySelector('select[name="size"]').value;
-    if (!size) {
-      document.getElementById('size-error').style.display = 'block';
-      isValid = false;
-    }
-
-    // Validate Has Defect
-    const hasDefectOptions = document.querySelectorAll('input[name="has_defect"]');
-    const hasDefectSelected = Array.from(hasDefectOptions).some(option => option.checked);
-    if (!hasDefectSelected) {
-      document.getElementById('defect-error').style.display = 'block';
-      isValid = false;
-    }
-
-    // Validate Equipment
-    const equipmentOptions = document.querySelectorAll('input[name="equipment"]');
-    const equipmentSelected = Array.from(equipmentOptions).some(option => option.checked);
-    if (!equipmentSelected) {
-      document.getElementById('equipment-error').style.display = 'block';
-      isValid = false;
-    }
-
-    // Validate Price
-    const price = document.querySelector('input[name="price"]').value;
-    if (!price) {
-      document.getElementById('price-error').style.display = 'block';
-      isValid = false;
-    }
-
-    return isValid; // Prevent form submission if any validation fails
-  }
-</script>
 {% endblock %}
