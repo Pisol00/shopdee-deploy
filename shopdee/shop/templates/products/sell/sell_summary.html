@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
+
 {% block title %}Sell Summary{% endblock %}
 {% block style %}
 <link rel="stylesheet" href="{% static 'style-sheet/sell-summary.css' %}" />
@@ -35,7 +37,7 @@
         </div>
         <div class="spec-item">
           <span class="fw-bold">Ask Price:</span>
-          <span>฿ {{ sell_data.price }}</span>
+          <span>฿ {{ sell_data.price|intcomma }}</span>
         </div>
       </div>
     </div>
@@ -100,7 +102,7 @@
       <div class="costs">
         <div class="detail-row">
           <span>Subtotal</span>
-          <span>฿{{ sell_data.price }}</span>
+          <span>฿{{ sell_data.price|floatformat:2|intcomma }}</span>
         </div>
         <div class="detail-row">
           <span>Shipping fee</span>
@@ -108,15 +110,15 @@
         </div>
         <div class="detail-row">
           <span>Transaction fee (7.0%)</span>
-          <span>฿{{ transaction_fee|floatformat:2 }}</span>
+          <span>฿{{ transaction_fee|floatformat:2|intcomma }}</span>
         </div>
         <div class="detail-row">
           <span>Payment processing fee (3.0%)</span>
-          <span>฿{{ processing_fee|floatformat:2 }}</span>
+          <span>฿{{ processing_fee|floatformat:2|intcomma }}</span>
         </div>
         <div class="detail-row total-payout">
           <span>Total payout</span>
-          <span>฿{{ total_payout|floatformat:2 }}</span>
+          <span>฿{{ total_payout|floatformat:2|intcomma }}</span>
         </div>
       </div>
 
