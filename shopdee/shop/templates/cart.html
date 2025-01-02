@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="container py-5">
+    {% if cart_items %}
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    Shopping Cart
+                </h4>
+                <form action="{% url 'clear_cart' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="fas fa-trash-alt me-2"></i>
+                        Clear All
+                    </button>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-center">Size</th>
+                            <th class="text-center">Condition</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Price</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    {% if item.product.collection.image %}
+                                    <img src="{{ item.product.collection.image.url }}"
+                                        alt="{{ item.product.collection.name }}" class="rounded"
+                                        style="width: 80px; height: 80px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                        style="width: 80px; height: 80px;">
+                                        <i class="fas fa-image text-secondary"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-1">{{ item.product.collection.name }}</h6>
+                                        {% if item.product.collection.brand %}
+                                        <small class="text-muted">{{ item.product.collection.brand }}</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                {% if item.product.size_clothing %}
+                                {{ item.product.size_clothing }}
+                                {% elif item.product.size_shoes %}
+                                {{ item.product.size_shoes }}
+                                {% else %}
+                                One Size
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if item.product.condition == 'brand_new' %}
+                                <span class="badge bg-success">Brand New</span>
+                                {% elif item.product.condition == 'used' %}
+                                <span class="badge bg-secondary">Used</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center fw-medium">
+                                {{ item.quantity }}
+                            </td>
+                            <td class="text-center fw-bold">
+                                ฿{{ item.product.price|floatformat:2|intcomma }}
+                            </td>
+                            <td class="text-center">
+                                <form action="{% url 'remove_from_cart' item.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link text-danger p-0">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-light rounded p-4 mt-4">
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex justify-content-between">
+                        <span>Total Quantity:</span>
+                        <span class="fw-bold">{{ total_quantity }} items</span>
+                    </div>
+                    <div class="d-flex justify-content-between fs-4 fw-bold">
+                        <span>Total Amount:</span>
+                        <span>฿{{ total_amount|floatformat:2|intcomma }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <a href="{% url 'checkout_cart' %}" class="btn btn-primary flex-grow-1">
+                    <i class="fas fa-credit-card me-2"></i>
+                    Proceed to Checkout
+                </a>
+                <a href="{% url 'explore' %}" class="btn btn-dark flex-grow-1">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card border-0 text-center">
+        <div class="card-body py-5">
+            <div class="bg-light rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center"
+                style="width: 120px; height: 120px;">
+                <i class="fas fa-shopping-basket fs-1 text-secondary"></i>
+            </div>
+            <h2 class="mb-3">Your Shopping Cart is Empty</h2>
+            <p class="text-muted mb-4">
+                Looks like you haven't added anything to your cart yet.<br>
+                Let's find something special for you!
+            </p>
+            <a href="{% url 'explore' %}" class="btn btn-dark rounded-pill px-4 py-2">
+                <i class="fas fa-store me-2"></i>
+                Start Shopping Now
+            </a>
+
+            <div class="mt-5 pt-4 border-top">
+                <h3 class="h5 text-muted mb-3">You might be interested in</h3>
+                <!-- ส่วนแสดง suggestions สามารถเพิ่มได้ตรงนี้ -->
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

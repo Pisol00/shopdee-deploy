@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'style-sheet/seller-add.css' %}" />
+    
+    <title>Add Seller</title>
+</head>
+<body>
+    {% include 'nav-employee.html' %}
+    <div class="container-seller">
+        
+        <h2 class="seller-title">Add Seller</h2>
+        <hr class="divider" />
+        
+        <!-- Notification message -->
+        {% if messages %}
+            <div class="notification">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="user-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th class="table-header">User ID</th>
+                        <th class="table-header">Fullname (or username)</th>
+                        <th class="table-header">Email</th>
+                        <th class="table-header">Account created_at</th>
+                        <th class="table-header">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users_without_group %}
+                    <tr>
+                        <td class="user-id-cell">{{ user.id }}</td>
+                        <td class="username-cell">
+                            {{ user.first_name }} {{ user.last_name|default:user.username }}
+                        </td>
+                        <td class="email-cell">{{ user.email }}</td>
+                        <td class="created-at-cell">{{ user.date_joined|date:"Y-m-d" }}</td>
+                        <td class="action-cell">
+                            <form method="post" action="{% url 'add_seller' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}" />
+                                <button class="add-button" type="submit" aria-label="Add seller">Add</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="seller-title">Remove Seller</h2>
+        <hr class="divider" />
+
+        <div class="user-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th class="table-header">User ID</th>
+                        <th class="table-header">Fullname (or username)</th>
+                        <th class="table-header">Email</th>
+                        <th class="table-header">Account created_at</th>
+                        <th class="table-header">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users_with_group %}
+                    <tr>
+                        <td class="user-id-cell">{{ user.id }}</td>
+                        <td class="username-cell">
+                            {{ user.first_name }} {{ user.last_name|default:user.username }}
+                        </td>
+                        <td class="email-cell">{{ user.email }}</td>
+                        <td class="created-at-cell">{{ user.date_joined|date:"Y-m-d" }}</td>
+                        <td class="action-cell">
+                            <form method="post" action="{% url 'remove_seller' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}" />
+                                <button class="remove-button" type="submit" aria-label="Remove seller">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  background: #ecf0f1;
+}
+
+/* Container */
+.container-seller {
+  margin-left: 260px;
+  padding: 40px;
+  flex: 1;
+}
+
+/* Heading */
+.seller-title {
+  font-size: 28px;
+  color: #343a40; /* สีดำ */
+}
+
+/* User Cards Container */
+.user-cards {
+  display: flex;
+  flex-direction: column; /* เปลี่ยนเป็นแนวตั้ง */
+}
+
+/* User Card */
+.user-card {
+  margin-bottom: 20px; /* ระยะห่างระหว่างกรอบ */
+  padding: 15px;
+  background-color: #ffffff; /* สีพื้นหลังกรอบ */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เงา */
+}
+
+/* Section Title */
+.section-title {
+  font-size: 22px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #343a40; /* สีดำ */
+  padding-bottom: 5px;
+}
+
+/* Table Styles */
+.user-table {
+  width: 100%;
+  border-collapse: collapse; /* รวมเส้นขอบ */
+}
+
+.table-header {
+  padding: 10px; /* เพิ่มขนาด padding */
+  background-color: #f4f4f4; /* สีพื้นหลังของหัวตาราง */
+  color: black; /* สีตัวอักษรในหัวตาราง */
+}
+
+/* กำหนดความกว้างของคอลัมน์ */
+.user-id-cell {
+  width: 10%; /* 10% สำหรับคอลัมน์ ID ผู้ใช้ */
+}
+
+.username-cell {
+  width: 30%; /* 30% สำหรับคอลัมน์ชื่อผู้ใช้ */
+}
+
+.email-cell {
+  width: 30%; /* 30% สำหรับคอลัมน์อีเมล */
+}
+
+.created-at-cell {
+  width: 15%; /* 15% สำหรับคอลัมน์วันที่สร้าง */
+}
+
+.action-cell {
+  width: 15%; /* 15% สำหรับคอลัมน์ action */
+  text-align: center; /* จัดกลางปุ่มในคอลัมน์ action */
+}
+
+/* Button */
+.add-button,
+.remove-button {
+  background-color: #007bff; /* สีน้ำเงินสำหรับปุ่มเพิ่ม */
+  color: white; /* สีตัวอักษรของปุ่ม */
+  border: none;
+  padding: 8px 12px; /* ขนาด padding */
+  border-radius: 5px; /* มุมมน */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: inline-block; /* ทำให้ปุ่มเป็นบล็อกเพื่อจัดกลาง */
+}
+
+.add-button:hover {
+  background-color: #0056b3; /* สีพื้นหลังเมื่อเลื่อนเมาส์ */
+}
+
+.remove-button {
+  background-color: #dc3545; /* สีแดงสำหรับปุ่มลบ */
+}
+
+.remove-button:hover {
+  background-color: #c82333; /* สีพื้นหลังเมื่อเลื่อนเมาส์ */
+}
+
+/* Container for each user section */
+.user-container {
+  margin-bottom: 30px; /* เพิ่มระยะห่างระหว่าง container */
+  padding: 20px;
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 2px solid #666; /* สีของเส้น Divider */
+  margin: 20px 0; /* ระยะห่างด้านบนและด้านล่าง */
+}
+
+/* Ensure both tables have the same styles */
+.user-table th,
+.user-table td {
+  border: 1px solid #dee2e6; /* ใช้กรอบเดียวกัน */
+  padding: 10px; /* ขนาด padding */
+
+}
+.user-table td {
+  background-color: #ffffff;
+}
+.user-table th {
+  background-color: #f4f4f4; /* ใช้สีพื้นหลังเดียวกันสำหรับหัวตาราง */
+}
+
+/* Aligning the buttons in the action cell */
+.action-cell {
+  text-align: center; /* จัดกลางปุ่มในคอลัมน์ action */
+}

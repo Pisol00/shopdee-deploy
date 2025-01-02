@@ -1,0 +1,100 @@
+.container-detail {
+  max-width: 1200px; /* ขนาดสูงสุดของ container */
+  margin: 0 auto; /* จัดกลาง */
+  padding: 20px; /* เว้นขอบ */
+}
+
+.product-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* เว้นระยะระหว่างภาพและข้อมูล */
+  margin-bottom: 40px; /* เว้นระยะด้านล่าง */
+  margin-top: 40px;
+}
+
+.product-info {
+  flex: 1; /* ขยายให้เต็มพื้นที่ */
+  min-width: 300px; /* ความกว้างขั้นต่ำ */
+}
+
+.collection-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px; /* เว้นระยะด้านล่าง */
+}
+
+.product-subtitle {
+  font-size: 1.25rem;
+  color: #666; /* สีตัวอักษรอ่อน */
+  margin-bottom: 20px; /* เว้นระยะด้านล่าง */
+}
+
+.price-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* จัดในรูปแบบตาราง 3 คอลัมน์ */
+  gap: 15px; /* ระยะห่างระหว่างคอลัมน์ */
+  margin-bottom: 20px; /* เว้นระยะด้านล่าง */
+}
+
+.price-label {
+  font-weight: bold;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between; /* จัดระเบียบปุ่มให้ห่างกัน */
+  margin-top: 20px;
+}
+
+.buttons a {
+  flex: 1; /* ทำให้ปุ่มมีขนาดเท่ากัน */
+  margin-right: 10px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+}
+
+.buttons a:last-child {
+  margin-right: 0; /* ลบ margin ขวาสำหรับปุ่มสุดท้าย */
+}
+
+.product-details {
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #ccc; /* เพิ่มกรอบ */
+  border-radius: 5px; /* มุมมน */
+  background-color: #f9f9f9; /* สีพื้นหลัง */
+}
+
+.collection-subtitle {
+  font-weight: bold;
+  margin-bottom: 10px; /* เว้นระยะด้านล่าง */
+}
+
+.review-section {
+  margin-top: 40px; /* เว้นระยะด้านบน */
+}
+
+/* เพิ่ม CSS สำหรับปุ่มที่ต้องการให้ดูดีขึ้น */
+.btn {
+  padding: 10px; /* ขนาด padding */
+  font-size: 1rem; /* ขนาดฟอนต์ */
+  text-align: center; /* จัดกลาง */
+}
+
+.btn-light {
+  background-color: #f8f9fa;
+  color: #000;
+}
+
+.btn-dark {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  color: #fff;
+}

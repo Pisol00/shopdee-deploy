@@ -1,0 +1,99 @@
+.title-recommendations {
+  font-size: 2rem; /* ขนาดฟอนต์ */
+  color: #333; /* สีตัวอักษร */
+  text-align: center; /* จัดกลาง */
+  margin-bottom: 20px; /* เว้นระยะด้านล่าง */
+}
+
+.recommendations {
+  display: flex; /* ใช้ Flexbox */
+  flex-wrap: wrap; /* ขยับไปแถวถัดไป */
+  justify-content: center; /* จัดกลาง */
+  gap: 20px; /* ช่องว่างระหว่างการแนะนำ */
+}
+
+.recommend {
+  background-color: #ffffff; /* สีพื้นหลัง */
+  border-radius: 8px; /* มุมมน */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เงา */
+  overflow: hidden; /* ไม่ให้เลอะขอบ */
+  transition: transform 0.3s ease; /* เอฟเฟกต์การขยาย */
+  max-width: 250px; /* ขนาดสูงสุด (เปลี่ยนจาก 300px เป็น 250px) */
+  width: 100%; /* กว้างเต็มที่ */
+  display: flex; /* แสดงในรูปแบบฟลิกซ์ */
+  flex-direction: column; /* แนวตั้ง */
+}
+
+
+.recommend:hover {
+  transform: scale(1.05); /* ขยายเมื่อเมาส์วาง */
+  cursor: pointer; /* เปลี่ยนเคอร์เซอร์ */
+}
+
+.recommend-info {
+  padding: 1rem; /* ช่องว่างภายใน */
+  flex-grow: 1; /* ให้ขยายเต็มที่ */
+  display: flex; /* ใช้ Flexbox */
+  flex-direction: column; /* แนวตั้ง */
+  justify-content: space-between; /* จัดระเบียบ */
+}
+
+.recommend-img {
+  height: 150px; /* ความสูง (ลดลงจาก 180px เป็น 150px) */
+  background-color: #e0e0e0; /* สีพื้นหลัง */
+  display: flex; /* ใช้ Flexbox */
+  justify-content: center; /* จัดกลาง */
+  align-items: center; /* จัดกลางแนวตั้ง */
+  margin-bottom: 10px; /* ช่องว่างด้านล่าง */
+  overflow: hidden; /* ป้องกันรูปภาพเกินกรอบ */
+}
+
+
+.recommend-img img {
+  width: 100%; /* กว้างเต็มที่ */
+  height: 100%; /* สูงเต็มที่ */
+  object-fit: cover; /* ให้รูปภาพเต็มกรอบ */
+}
+
+.recommend-title {
+  font-size: 14px; /* ขนาดฟอนต์ */
+  font-weight: bold; /* ตัวหนา */
+  margin-bottom: 5px; /* เว้นระยะด้านล่าง */
+  color: #333; /* สีตัวอักษร */
+}
+
+.recommend-content-price {
+  display: flex; /* ใช้ Flexbox */
+  flex-direction: column; /* แนวตั้ง */
+  margin-top: auto; /* ให้ยึดท้าย */
+}
+
+.recommend-price-label,
+.recommend-price {
+  font-size: 14px; /* ขนาดฟอนต์ */
+}
+
+.recommend-price-label {
+  color: #666; /* สีตัวอักษร */
+  margin-bottom: 5px; /* เว้นระยะด้านล่าง */
+}
+
+.recommend-price {
+  font-weight: bold; /* ตัวหนา */
+  color: #000; /* สีราคาที่เด่นชัด */
+}
+
+.no-recommendations {
+  text-align: center; /* จัดกลาง */
+  margin-top: 20px; /* เว้นระยะด้านบน */
+}
+
+.no-recommendations p {
+  font-size: 16px; /* ขนาดฟอนต์ */
+  color: #999; /* สีตัวอักษร */
+  
+}
+
+.recommendations a {
+  text-decoration: none; /* ลบการตกแต่งตัวอักษร */
+}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<style>
+  .hover-scale {
+    transition: transform 0.3s;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Main Section -->
+<section class="py-5" style="background-color: #f2f0f1;">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 pe-lg-5">
+        <h1 class="display-4 mb-3">FIND CLOTHES THAT MATCHES YOUR STYLE</h1>
+        <p class="text-muted mb-4">Browse through our diverse range of meticulously crafted garments, designed to bring
+          out your individuality and cater to your sense of style.</p>
+        <a href="{% url 'explore' %}" class="btn btn-dark rounded-pill px-4 py-2">Shop Now</a>
+      </div>
+      <div class="col-lg-6">
+        <img src="https://shopdee-image.s3.ap-southeast-2.amazonaws.com/homepage/trendy-fashionable-couple-posing.jpg"
+          class="img-fluid rounded" alt="Stylish couple wearing SHOPDEE clothes">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Brand Logos -->
+<section class="bg-dark py-4">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+          {% for brand in brands|slice:":11" %}
+          <a href="#" class="d-flex justify-content-center align-items-center" style="width: 120px; height: 120px;">
+            <img src="{{ brand.img_url }}" alt="{{ brand.name }}" class="img-fluid">
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- New Arrivals Section -->
+<section class="py-5">
+  <div class="container">
+    <h1 class="display-5 text-center mb-5">NEW ARRIVALS</h1>
+    <div class="row g-4 justify-content-center">
+      {% for collection in collections %}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm hover-scale">
+          <a href="{% url 'detail' collection.id %}" class="text-decoration-none text-dark">
+            <div class="card-body">
+              <img src="{{ collection.primary_image.image_url }}" class="img-fluid mb-3" alt="{{ collection.name }}">
+              <h5 class="card-title">{{ collection.name }}</h5>
+              <p class="card-text small text-muted mb-1">Starting From</p>
+              <p class="card-text fw-bold">฿{{ collection.starting_price|default:"N/A" }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-5">
+      <a href="{% url 'explore' %}" class="btn btn-outline-dark rounded-pill px-4">View All</a>
+    </div>
+  </div>
+</section>
+
+<!-- Best Seller Section -->
+<section class="py-5">
+  <div class="container">
+    <h1 class="display-5 text-center mb-5">BEST SELLER</h1>
+    <div class="row g-4 justify-content-center">
+      {% for popular_collection in most_popular_collections %}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm hover-scale">
+          <a href="{% url 'detail' popular_collection.id %}" class="text-decoration-none text-dark">
+            <div class="card-body">
+              <img src="{{ popular_collection.primary_image.image_url }}" class="img-fluid mb-3"
+                alt="{{ popular_collection.name }}">
+              <h5 class="card-title">{{ popular_collection.name }}</h5>
+              <p class="card-text fw-bold">Sales: {{ popular_collection.num_orders }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Slideshow -->
+<section class="">
+  <div id="genderCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <a href="{% url 'explore' %}">
+          <img src="https://shopdee-image.s3.ap-southeast-2.amazonaws.com/homepage/slideshow2.png" class="d-block w-100"
+            style="height: 800px; object-fit: cover;" alt="Air Jordan 1">
+          <div class="carousel-caption">
+            <h5 class="display-6">NIKE AIR JORDAN 1</h5>
+            <button class="btn btn-light rounded-pill mt-3">SHOP NOW</button>
+          </div>
+        </a>
+      </div>
+      <div class="carousel-item">
+        <a href="{% url 'explore' %}">
+          <img src="https://shopdee-image.s3.ap-southeast-2.amazonaws.com/homepage/slideshow1.png" class="d-block w-100"
+            style="height: 800px; object-fit: cover;" alt="Nike Shop">
+          <div class="carousel-caption">
+            <h5 class="display-6">NIKE Now Available</h5>
+            <button class="btn btn-light rounded-pill mt-3">SHOP NOW</button>
+          </div>
+        </a>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#genderCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#genderCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</section>
+{% endblock %}
+
+{% block script %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'script/script.js' %}"></script>
+{% endblock %}

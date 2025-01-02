@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Buying{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/sidebar.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+
+        <div class="col-md-3">
+            {% include "profiles/sidebar.html" %}
+        </div>
+
+        <div class="col-md-9">
+            <h4 class="mb-4">Buying</h4>
+
+            <ul class="nav nav-tabs mb-4">
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold text-dark {% if current_status == 'Pending' %}active fw-bold{% endif %}" href="?status=Pending&search={{ search_query }}">Pending</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold text-dark {% if current_status == 'Shipping' %}active fw-bold{% endif %}" href="?status=Shipping&search={{ search_query }}">Shipping</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold text-dark {% if current_status == 'Processing' %}active fw-bold{% endif %}" href="?status=Processing&search={{ search_query }}">Processing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold text-dark {% if current_status == 'Completed' %}active fw-bold{% endif %}" href="?status=Completed&search={{ search_query }}">Completed</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold text-dark {% if current_status == 'Canceled' %}active fw-bold{% endif %}" href="?status=Canceled&search={{ search_query }}">Canceled</a>
+                </li>
+            </ul>
+
+            <div class="card p-4">
+                <form method="get" class="d-flex justify-content-between align-items-center mb-4">
+                    <input type="text" name="search" class="form-control w-50" placeholder="Search by Collection Name, Order ID" value="{{ search_query }}">
+                    <input type="hidden" name="status" value="{{ current_status }}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Order ID</th>
+                            <th scope="col">Collection Name</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'order_detail' order_id=order.id %}">#{{ order.id }}</a>
+                            </td>
+                            <td>{{ order.product.collection.name }}</td>
+                            <td>{{ order.date|date:"F j, Y" }}</td>
+                            <td>{{ order.status }}</td>
+                            <td>฿ {{ order.price }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No orders found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        Show
+                        <select class="form-select d-inline-block w-auto">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

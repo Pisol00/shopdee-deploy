@@ -1,0 +1,97 @@
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background: #ecf0f1;
+    cursor: default;
+  }
+  
+  /* Container */
+  .container {
+    margin-left: 260px;
+    padding: 40px;
+    flex: 1;
+  }
+
+  .add-collection{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+/* การจัดวางหน้า Add Collection */
+
+/* สไตล์สำหรับส่วนหัว */
+.add-collection h2 {
+    text-align: center;
+    color: #444; /* สีเข้มเล็กน้อยเพื่อความชัดเจน */
+    margin-bottom: 25px; /* เพิ่มช่องว่างด้านล่าง */
+    font-size: 28px; /* ขนาดใหญ่ขึ้นเล็กน้อย */
+    font-weight: 700; /* เน้นตัวอักษรให้เด่นขึ้น */
+}
+
+/* สไตล์สำหรับฟอร์ม */
+.add-collection form {
+    background: white; /* สีพื้นหลังฟอร์ม */
+    padding: 30px; /* ช่องว่างภายใน */
+    border-radius: 10px; /* มุมมน */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* เงา */
+    max-width: 450px; /* ความกว้างสูงสุดของฟอร์ม */
+    width: 100%; /* ความกว้างเต็ม */
+    margin: 0 auto; /* จัดกลาง */
+}
+
+/* จัดตำแหน่ง label ให้ชิดซ้าย */
+.add-collection form p label {
+    display: block;
+    text-align: left; /* จัดชิดซ้าย */
+    font-weight: bold; /* เน้นตัวหนา */
+    margin-bottom: 5px; /* เว้นระยะด้านล่างเล็กน้อย */
+    color: #333; /* สีข้อความ */
+}
+
+/* สไตล์ input, textarea, select ในฟอร์ม */
+.add-collection form p input, form p textarea, form p select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* ปุ่มดำ */
+.btn-black {
+    background-color: #000; /* สีพื้นหลังปุ่มดำ */
+    color: white; /* สีตัวอักษร */
+    padding: 12px 20px; /* ช่องว่างภายใน */
+    border: none; /* ไม่มีขอบ */
+    border-radius: 5px; /* มุมมน */
+    cursor: pointer; /* เปลี่ยนเคอร์เซอร์ */
+    display: block; /* แสดงเป็นบล็อก */
+    width: 100%; /* ความกว้างเต็ม */
+    margin-top: 15px; /* ช่องว่างด้านบน */
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* เพิ่มเอฟเฟกต์เปลี่ยนสี */
+}
+
+.btn-black:hover {
+    background-color: #333; /* สีปุ่มเมื่อโฮเวอร์ */
+}
+
+/* ข้อความแจ้งเตือน */
+.error {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* การตอบสนองสำหรับหน้าจอขนาดเล็ก */
+@media (max-width: 768px) {
+    form {
+        padding: 20px;
+        max-width: 90%;
+    }
+}

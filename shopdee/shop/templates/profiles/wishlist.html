@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Profile{% endblock%}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/sidebar.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-3">
+      {% include "profiles/sidebar.html" %}
+    </div>
+
+    <div class="col-lg-9">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          {% if wishlist %}
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="mb-0">My Wishlist</h4>
+              <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  <i class="fas fa-filter me-1"></i> Categories
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item active" href="#">All Items</a></li>
+                  <li><a class="dropdown-item" href="#">Clothing</a></li>
+                  <li><a class="dropdown-item" href="#">Shoes</a></li>
+                  <li><a class="dropdown-item" href="#">Accessories</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+              {% for collection in wishlist %}
+              <div class="col">
+                <div class="card h-100 border-0 shadow-hover position-relative">
+                  <a href="{% url 'detail' collection.collection.id %}" class="text-decoration-none">
+                    <div class="position-relative">
+                      {% if collection.primary_image %}
+                        <img src="{{ collection.primary_image.image_url }}" 
+                             class="card-img-top" 
+                             alt="{{ collection.name }}"
+                             style="height: 280px; object-fit: cover;">
+                      {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 280px;">
+                          <i class="fas fa-image text-secondary fs-1"></i>
+                        </div>
+                      {% endif %}
+                      
+                      <form action="{% url 'remove_from_wishlist' collection.collection.id %}" 
+                            method="post" 
+                            class="position-absolute top-0 end-0 m-2">
+                        {% csrf_token %}
+                        <button type="submit" 
+                                class="btn btn-light rounded-circle p-2 shadow-sm" 
+                                data-bs-toggle="tooltip" 
+                                title="Remove from wishlist">
+                          <i class="fas fa-trash-alt text-danger"></i>
+                        </button>
+                      </form>
+                    </div>
+
+                    <div class="card-body">
+                      <h5 class="card-title text-dark mb-2">{{ collection.collection.name }}</h5>
+                      {% if collection.collection.brand %}
+                        <p class="card-text text-muted small mb-0">{{ collection.collection.brand }}</p>
+                      {% endif %}
+                      {% if collection.collection.category %}
+                        <span class="badge bg-secondary mt-2">{{ collection.collection.category }}</span>
+                      {% endif %}
+                    </div>
+                  </a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+          {% else %}
+            <div class="text-center py-5">
+              <div class="mb-4">
+                <i class="fas fa-heart text-secondary" style="font-size: 4rem;"></i>
+              </div>
+              <h5 class="mb-3">Your Wishlist is Empty</h5>
+              <p class="text-muted mb-4">Browse our collection and add items you love!</p>
+              <a href="{% url 'explore' %}" class="btn btn-dark">
+                <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Initialize tooltips -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  });
+</script>
+{% endblock %}

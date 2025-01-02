@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Checkout Cart{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/product-checkout.css' %}" />
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f9fc;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container-main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .checkout-container {
+        display: flex;
+        justify-content: space-between;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .product-details {
+        flex: 2;
+        margin-right: 20px;
+        border-right: 2px solid #e5e5e5;
+        padding-right: 20px;
+    }
+
+    .summary {
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #333;
+        margin-top: 20px;
+    }
+
+    .checkout-form {
+        flex: 3;
+    }
+
+    .checkout-form h2 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .shipping-address,
+    .payment-method {
+        margin-bottom: 20px;
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    select:focus {
+        border-color: #000;
+    }
+
+    .payment-details {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+    }
+
+    .total {
+        font-weight: bold;
+        color: #28a745;
+    }
+
+    .pay-button {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .pay-button:hover {
+        background-color: #218838;
+    }
+
+    @media (max-width: 768px) {
+        .checkout-container {
+            flex-direction: column;
+        }
+
+        .product-details {
+            margin-right: 0;
+            border-right: none;
+            padding-right: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block nav %}
+{% include 'nav.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container-main">
+    <div class="checkout-container">
+        <div class="product-details">
+            <h4>Your Cart Items</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Collection Name</th>
+                        <th>Size</th>
+                        <th>Condition</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.product.collection.name }}</td>
+                        <td>
+                            {% if item.product.size_clothing %}
+                                {{ item.product.size_clothing }}
+                            {% elif item.product.size_shoes %}
+                                {{ item.product.size_shoes }}
+                            {% else %}
+                                One Size
+                            {% endif %}
+                        </td>
+                        <td>{{ item.product.condition }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>฿ {{ item.product.price|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="summary">
+                <p>Shipping Fee: ฿ {{ shipping_fee|default:0 }}</p>
+                <p>Total Price: ฿ {{ total_price|add:shipping_fee|intcomma }}</p>
+            </div>
+        </div>
+
+        <div class="checkout-form">
+            <h4>Shipping Address</h4>
+            <form method="post">
+                {% csrf_token %}
+                <div class="shipping-address">
+                    <label for="shipping_address">Select Address</label>
+                    <select id="shipping_address" name="address_id" required>
+                        <option value="">-- Choose Shipping Address --</option>
+                        {% for address in addresses %}
+                        <option value="{{ address.id }}">
+                            {{ address.recipient_name }}, {{ address.address_line1 }}, {{ address.district }}, {{ address.province }} {{ address.postal_code }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <hr>
+
+                <h4>Shipping Method</h4>
+                <div class="shipping-method">
+                    <p>Standard delivery</p>
+                    <p>฿ {{ shipping_fee|default:0 }}</p>
+                </div>
+                <hr>
+
+                <h4>Payment</h4>
+                <div class="payment-method">
+                    <label for="payment_method">Payment Method</label>
+                    <div>
+                        <input type="radio" id="credit_debit_card" name="payment_method" value="credit_debit_card" required onclick="toggleCardDetails()" />
+                        <label for="credit_debit_card">
+                            <img src="https://www.pikpng.com/pngl/b/488-4881288_you-can-use-visa-and-mastercard-online-to.png" alt="Credit/Debit Card Icon" class="payment-icon">
+                            Credit/Debit Card
+                        </label>
+                    </div>
+                    <div>
+                        <input type="radio" id="paypal" name="payment_method" value="paypal" required onclick="togglePayPalDetails()" />
+                        <label for="paypal">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal Icon" class="payment-icon">
+                            PayPal
+                        </label>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Form for Credit/Debit Card -->
+                <div id="card-details" class="payment-details" style="display: none;">
+                    <h4>Credit/Debit Card Details</h4>
+                    <div class="form-group">
+                        <label for="card_number">Card Number</label>
+                        <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expiry_date">Expiry Date (MM/YY)</label>
+                        <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                    </div>
+                </div>
+
+                <!-- PayPal Button -->
+                <div id="paypal-details" class="payment-details" style="display: none;">
+                    <h4>Pay with PayPal</h4>
+                    <a href="#" class="paypal-button">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal Logo" class="paypal-logo">
+                    </a>
+                </div>
+
+                <div class="payment-summary">
+                    <div class="payment-details">
+                        <p>Subtotal</p>
+                        <p id="subtotal">฿ {{ total_price|intcomma }}</p>
+                    </div>
+                    <div class="payment-details">
+                        <p>Shipping fee</p>
+                        <p>฿ {{ shipping_fee|default:0 }}</p>
+                    </div>
+                    <div class="payment-details">
+                        <p>Authentication Fee</p>
+                        <p>Free</p>
+                    </div>
+                    <div class="payment-details">
+                        <p class="total">Total</p>
+                        <p id="total" class="total">฿ {{ total_price|add:shipping_fee|intcomma }}</p>
+                    </div>
+                </div>
+
+                <button class="pay-button" type="submit">Pay Now</button>
+            </form> <!-- ปิดฟอร์มที่นี่ -->
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleCardDetails() {
+        document.getElementById("card-details").style.display = "block";
+        document.getElementById("paypal-details").style.display = "none";
+    }
+
+    function togglePayPalDetails() {
+        document.getElementById("paypal-details").style.display = "block";
+        document.getElementById("card-details").style.display = "none";
+    }
+</script>
+{% endblock %}

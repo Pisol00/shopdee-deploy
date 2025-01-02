@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sell Product{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'style-sheet/sell-detail.css' %}" />
+<script src="{% static 'js/sell_detail.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-size">
+  {% include '../../collections/previews.html' %}
+
+  <div class="product-info">
+    <h1>{{ collection.name }}</h1>
+    <p class="product-code">{{ collection.brand.name }} | {{ collection.id }}</p>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="product-detail">
+        <h3 class="detail-header fw-semibold">Size</h3>
+        <select name="size" required>
+          {% if category == 'Apparel' %}
+          <option value="XXS">XX-Small</option>
+          <option value="XS">X-Small</option>
+          <option value="S">Small</option>
+          <option value="M">Medium</option>
+          <option value="L">Large</option>
+          <option value="XL">Extra Large</option>
+          <option value="XXL">XX Large</option>
+          <option value="3XL">3X Large</option>
+          <option value="4XL">4X Large</option>
+          {% elif category == 'Shoes' %}
+          <option value="US4">4</option>
+          <option value="US4.5">4.5</option>
+          <option value="US5">5</option>
+          <option value="US5.5">5.5</option>
+          <option value="US6">6</option>
+          <option value="US6.5">6.5</option>
+          <option value="US7">7</option>
+          <option value="US7.5">7.5</option>
+          <option value="US8">8</option>
+          <option value="US8.5">8.5</option>
+          <option value="US9">9</option>
+          <option value="US9.5">9.5</option>
+          <option value="US10">10</option>
+          <option value="US10.5">10.5</option>
+          <option value="US11">11</option>
+          <option value="US11.5">11.5</option>
+          <option value="US12">12</option>
+          <option value="US12.5">12.5</option>
+          <option value="US13">13</option>
+          <option value="US13.5">13.5</option>
+          <option value="US14">14</option>
+          <option value="US14.5">14.5</option>
+          <option value="US15">15</option>
+          <option value="US15.5">15.5</option>
+          <option value="US16">16</option>
+          <option value="US16.5">16.5</option>
+          <option value="US17">17</option>
+          <option value="US17.5">17.5</option>
+          <option value="US18">18</option>
+          {% else %}
+          <option value="One Size">One Size</option>
+          {% endif %}
+        </select>
+      </div>
+
+      <div class="product-detail">
+        <h3 class="detail-header fw-semibold">Has Defect</h3>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="has_defect" value="True" /> Yes
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="has_defect" value="False" checked /> No
+          </label>
+        </div>
+      </div>
+
+      <div class="product-detail">
+        <h3 class="detail-header fw-semibold">Equipment</h3>
+        <div class="radio-group">
+          {% if collection.category.name == 'Apparel' %}
+          <label class="radio-option">
+            <input type="radio" name="equipment" value="tags" /> Tags
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="equipment" value="dust-bag" checked /> Dust Bag
+          </label>
+          {% elif collection.category.name == 'Shoes' %}
+          <label class="radio-option">
+            <input type="radio" name="equipment" value="box" /> Box
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="equipment" value="box_defect" /> Box (defect)
+          </label>
+          {% else %}
+          <p>No equipment options available for this category.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="product-detail">
+        <h3 class="detail-header fw-semibold">Price</h3>
+        <div class="price-input">
+          <input type="text" name="price" placeholder="Add Price" required />
+        </div>
+      </div>
+
+
+      <div class="preview-images" id="preview-images"></div>
+
+      <div class="purchase-options" id="purchase-options">
+        <button type="submit" class="sell-button btn btn-dark d-block rounded-pill mx-auto">Sell</button>
+      </div>
+    </form>
+
+    {% if error %}
+    <p class="error-message" style="color:red;">{{ error }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

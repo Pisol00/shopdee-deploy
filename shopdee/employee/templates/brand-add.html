@@ -1,0 +1,36 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'style-sheet/add-brand.css' %}" />
+
+    <title>Document</title>
+  </head>
+  <body>
+    {%include 'nav-employee.html'%}
+    <div class="container">
+      <div class="brand-container">
+        <h2 class="brand-header">Add Brand</h2>
+        <form method="post" class="brand-form">
+          {% csrf_token %} {{ form.as_p }}
+          <button type="submit" class="btn-black">Add Brand</button>
+        </form>
+
+        {% if form.errors %}
+        <div class="error-messages">
+          <ul class="error-list">
+            {% for field in form %} {% for error in field.errors %}
+            <li class="error-item">{{ error }}</li>
+            {% endfor %} {% endfor %} {% for error in form.non_field_errors %}
+            <li class="error-item">{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

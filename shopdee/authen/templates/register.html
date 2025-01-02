@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Register {% endblock %}
+
+{% block style %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<style>
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center vh-50 mt-5 mb-5">
+    <div class="card shadow-lg" style="width: 30rem;">
+        <div class="card-body">
+            <h1 class="card-title text-center">Create an Account</h1>
+            <p class="card-text text-center">Enter your details below</p>
+            <form method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                            id="username" name="username" placeholder="Choose a username" required minlength="4"
+                            maxlength="20">
+                    </div>
+                    {% for error in form.username.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-right-0"><i
+                                    class="fas fa-envelope"></i></span>
+                        </div>
+                        <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                            id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    {% for error in form.email.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password1">Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <input type="password"
+                            class="form-control pr-5 {% if form.password1.errors %}is-invalid{% endif %}" id="password1"
+                            name="password1" placeholder="Create a strong password" required>
+                        <div class="input-group-append position-absolute" style="right: 0; z-index: 10;">
+                            <button class="btn btn-link text-muted btn-no-focus" type="button" id="togglePassword1"
+                                style="outline: none; box-shadow: none;">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="passwordStrength" class="password-strength"></div>
+                    {% for error in form.password1.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="password2">Confirm Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <input type="password"
+                            class="form-control pr-5 {% if form.password2.errors %}is-invalid{% endif %}" id="password2"
+                            name="password2" placeholder="Confirm your password" required>
+                        <div class="input-group-append position-absolute" style="right: 0; z-index: 10;">
+                            <button class="btn btn-link text-muted btn-no-focus" type="button" id="togglePassword2"
+                                style="outline: none; box-shadow: none;">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% for error in form.password2.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- General form errors -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-dark btn-block">Create Account</button>
+            </form>
+            <p class="login-link text-center mt-3">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Password Toggle Functionality
+    ['password1', 'password2'].forEach(id => {
+        const passwordInput = document.getElementById(id);
+        const toggleButton = document.getElementById(`toggle${id.charAt(0).toUpperCase() + id.slice(1)}`);
+
+        toggleButton.addEventListener('click', function () {
+            const icon = this.querySelector('i');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        });
+    });
+
+    // Password Strength Meter
+    document.getElementById('password1').addEventListener('input', function () {
+        const password = this.value;
+        const strengthBar = document.getElementById('passwordStrength');
+        let strength = 0;
+
+        // Check length
+        if (password.length >= 8) strength++;
+        if (password.length >= 12) strength++;
+
+        // Check complexity
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+        // Set color and width based on strength
+        switch (strength) {
+            case 0:
+            case 1:
+            case 2:
+                strengthBar.style.backgroundColor = 'red';
+                strengthBar.style.width = `${strength * 33}%`;
+                break;
+            case 3:
+            case 4:
+                strengthBar.style.backgroundColor = 'orange';
+                strengthBar.style.width = `${strength * 25}%`;
+                break;
+            case 5:
+            case 6:
+                strengthBar.style.backgroundColor = 'green';
+                strengthBar.style.width = `${strength * 20}%`;
+                break;
+        }
+    });
+</script>
+{% endblock %}
