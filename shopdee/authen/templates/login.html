@@ -4,32 +4,34 @@
 
 {% block style %}
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 {% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center vh-50 mt-5 mb-5">
-    <div class="card shadow-lg" style="width: 30rem;">
-        <div class="card-body">
-            <h1 class="card-title text-center">Log in to Shopdee</h1>
-            <p class="card-text text-center">Enter your details below</p>
+<div class="container d-flex justify-content-center align-items-center min-vh-75 my-5">
+    <div class="card border-0 shadow-lg rounded-lg" style="width: 30rem;">
+        <div class="card-body p-5">
+            <h3 class="card-title font-weight-bold text-center">Welcome Back!</h3>
+            <p class="card-text text-center text-secondary mb-4">Enter your credentials to access your account</p>
+            
             <form method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
                 
                 <!-- Username -->
-                <div class="mb-3">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
-                           id="username" name="username" placeholder="Username" required>
+                <div class="form-group mb-4">
+                    <label for="username" class="font-weight-bold text-dark">Username</label>
+                    <input type="text" class="form-control rounded-lg py-4 {% if form.username.errors %}is-invalid{% endif %}" 
+                           id="username" name="username" placeholder="Enter your username" required>
                     {% for error in form.username.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
 
                 <!-- Password -->
-                <div class="mb-3">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
-                           id="password" name="password" placeholder="Password" required>
+                <div class="form-group mb-4">
+                    <label for="password" class="font-weight-bold text-dark">Password</label>
+                    <input type="password" class="form-control rounded-lg py-4 {% if form.password.errors %}is-invalid{% endif %}" 
+                           id="password" name="password" placeholder="Enter your password" required>
                     {% for error in form.password.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
@@ -37,16 +39,16 @@
 
                 <!-- General form errors -->
                 {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger rounded-lg">
                         {% for error in form.non_field_errors %}
                             {{ error }}
                         {% endfor %}
                     </div>
                 {% endif %}
 
-                <button type="submit" class="btn btn-dark btn-block">Log In</button>
+                <button type="submit" class="btn btn-dark btn-block py-3 mt-4 font-weight-bold text-uppercase rounded-lg">Sign In</button>
             </form>
-            <p class="login-link text-center">Don't you have an account? <a href="{% url 'register' %}">Register</a></p>
+            <p class="text-center mt-4">Don't have an account? <a href="{% url 'register' %}" class="font-weight-bold text-dark">Create Account</a></p>
         </div>
     </div>
 </div>
