@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+*.egg
+*.log
+
+# Virtualenv
+env/
+venv/
+ENV/
+.env/
+.venv/
+
+# Django Stuff
+*.sqlite3
+db.sqlite3
+*.log
+*.pot
+*.pyc
+*.mo
+media/
+staticfiles/
+static/
+
+# Secret & config
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# MacOS & Windows system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+desktop.ini
+
+# Migrations (optional, ถ้าใช้ร่วมกันข้ามเครื่องอาจไม่อยาก ignore)
+**/migrations/*.py
+!**/migrations/__init__.py
